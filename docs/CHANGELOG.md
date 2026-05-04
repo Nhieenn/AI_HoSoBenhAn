@@ -24,6 +24,24 @@
 - src/app/api/ai/normalize/route.ts (NEW)
 - src/app/api/admin/dictionary/route.ts (NEW)
 
+## [2026-05-04] — Module 2: Ẩn danh dữ liệu (De-identification)
+### Added
+- Bảng `DeidAuditLog` trong schema Prisma để lưu lịch sử ẩn danh.
+- Tích hợp `AIService.deidentify(text)` kết nối với AI Engine.
+- `RecordService`: Xử lý băm `patientId` (SHA-256) và thiết lập luồng xử lý bất đồng bộ (chạy nền).
+- API Backend: Endpoint `/api/documents/ingest` (POST) tiếp nhận dữ liệu HIS và trả về mã `202 Accepted`.
+- API Backend: Endpoint `/api/documents/[id]/status` (GET) kiểm tra trạng thái xử lý.
+### Security
+- Băm `patientId` chuẩn SHA-256 có hỗ trợ salt.
+- Input validation bắt buộc (`externalId`, `patientId`, `content`, `type`).
+- Xử lý mượt mà (Graceful Degradation) khi Database hoặc AI Engine mất kết nối, không làm treo ứng dụng.
+### Files changed
+- prisma/schema.prisma (MODIFIED)
+- src/services/aiService.ts (MODIFIED)
+- src/services/recordService.ts (NEW)
+- src/app/api/documents/ingest/route.ts (NEW)
+- src/app/api/documents/[id]/status/route.ts (NEW)
+
 ## [2026-04-12] — Module Partner (Mẫu)
 ### Added
 - API CRUD /api/partners (GET, POST, PUT, DELETE)
