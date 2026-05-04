@@ -1,27 +1,65 @@
-# API Contracts — AI_HoSoBenhAn
+# API Contracts — ViMedAI
 
-## Auth
-### POST /api/auth/login
-- Auth: Public
-- Body: { email: string, password: string }
-- Response 200: { token: string, user: { id, name, role } }
-- Response 401: { error: "Invalid credentials" }
+## 1. Authentication
+### POST `/api/auth/login`
+- **Auth:** Public
+- **Body:** `{ username, password }`
+- **Response 200:** `{ token, user: { id, role, dept } }`
 
-## Partners
-### GET /api/partners
-- Auth: Required (Admin, Manager)
-- Query: ?page=1&limit=20&search=keyword&status=ACTIVE
-- Response 200: { data: Partner[], total: number, page: number }
+---
 
-### POST /api/partners
-- Auth: Required (Admin)
-- Body: { name: string, email: string, phone: string }
-- Validation: Zod schema (name: min 1, email: valid, phone: regex)
-- Response 201: { data: Partner }
-- Response 400: { error: "Validation failed", details: [...] }
+## 2. Document Processing
+### POST `/api/documents/ingest`
+- **Desc:** Nhận dữ liệu từ HIS và khởi chạy pipeline AI.
+- **Auth:** Required (System/Admin)
+- **Body:** `{ externalId, patientId, content, type: 'RADIOLOGY' | 'DISCHARGE' }`
+- **Response 202:** `{ jobId, status: 'PROCESSING' }`
 
-### PUT /api/partners/:id
-- Auth: Required (Admin)
-- Body: Partial<Partner>
-- Response 200: { data: Partner }
-- Response 404: { error: "Partner not found" }
+### GET `/api/documents/:id/status`
+- **Desc:** Kiểm tra trạng thái xử lý AI.
+- **Response 200:** `{ status: 'COMPLETED', draftId: '...' }`
+
+---
+
+## 3. AI Drafts (Bác sĩ Workflow)
+### GET `/api/drafts`
+- **Desc:** Lấy danh sách bản thảo cần duyệt.
+- **Query:** `?deptId=...&status=DRAFT`
+- **Response 200:** `{ data: AIDraft[] }`
+
+### GET `/api/drafts/:id`
+- **Desc:** Xem chi tiết bản thảo kèm trích dẫn RAG.
+- **Response 200:** 
+  ```json
+  {
+    "id": "...",
+    "content": { "section_1": "...", "section_2": "..." },
+    "citations": [ { "text": "...", "source": "Phác đồ BYT 2024" } ],
+    "uncertainty_flags": [ { "field": "medication", "reason": "Dose unclear" } ]
+  }
+  ```
+
+### PUT `/api/drafts/:id`
+- **Desc:** Cập nhật bản thảo sau khi bác sĩ sửa.
+- **Body:** `{ content: { ... }, status: 'APPROVED' | 'REJECTED' }`
+- **Response 200:** `{ success: true }`
+
+---
+
+## 4. Dictionary Management
+### GET `/api/admin/dictionary`
+- **Query:** `?search=...&deptId=...`
+- **Response 200:** `[ { abbr, fullText, ... } ]`
+
+### POST `/api/admin/dictionary`
+- **Body:** `{ abbr, fullText, departmentId, category }`
+- **Response 201:** `{ success: true }`
+
+---
+
+## 5. RAG & Knowledge Base
+### POST `/api/rag/upload-protocol`
+- **Desc:** Upload phác đồ điều trị mới để index vào Vector DB.
+- **Auth:** Admin
+- **Body:** FormData (PDF/Docx file)
+- **Response 200:** `{ indexed_nodes: 45 }`

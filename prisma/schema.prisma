@@ -1,0 +1,117 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  DOCTOR
+  ADMIN
+  NURSE
+  RESEARCHER
+}
+
+enum RecordStatus {
+  PENDING
+  PROCESSED
+  ERROR
+}
+
+enum DraftStatus {
+  DRAFT
+  APPROVED
+  REJECTED
+}
+
+enum DictCategory {
+  DRUG
+  SYMPTOM
+  ADMIN
+}
+
+model Department {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  users     User[]
+  dictionaries NormalizationDict[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model User {
+  id           String     @id @default(cuid())
+  username     String     @unique
+  password     String
+  role         Role       @default(DOCTOR)
+  department   Department @relation(fields: [departmentId], references: [id])
+  departmentId String
+  drafts       AIDraft[]
+  auditLogs    AuditLog[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model MedicalRecord {
+  id                  String       @id
+  rawContent          String       @db.Text
+  deidentifiedContent String?      @db.Text
+  patientIdHash       String
+  status              RecordStatus @default(PENDING)
+  drafts              AIDraft[]
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+
+  @@index([patientIdHash])
+}
+
+model AIDraft {
+  id        String      @id @default(cuid())
+  record    MedicalRecord @relation(fields: [recordId], references: [id])
+  recordId  String
+  content   Json
+  doctor    User        @relation(fields: [doctorId], references: [id])
+  doctorId  String
+  status    DraftStatus @default(DRAFT)
+  version   Int         @default(1)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model NormalizationDict {
+  id           String       @id @default(cuid())
+  abbr         String
+  fullText     String
+  category     DictCategory @default(ADMIN)
+  department   Department?  @relation(fields: [departmentId], references: [id])
+  departmentId String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  @@index([abbr])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  action    String
+  targetId  String
+  diff      Json?
+  createdAt DateTime @default(now())
+}
+
+model DeidAuditLog {
+  id            String   @id @default(cuid())
+  recordId      String
+  entityType    String   // e.g., NAME, PHONE, ADDRESS
+  originalValue String   // Encrypted value
+  maskedValue   String   // e.g., [NAME_1]
+  startPos      Int
+  endPos        Int
+  createdAt     DateTime @default(now())
+
+  @@index([recordId])
+}
