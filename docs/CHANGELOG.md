@@ -1,5 +1,17 @@
 # Changelog — AI_HoSoBenhAn
 
+## [2026-05-05] — Module 4: Sinh nháp (Generation)
+### Added
+- **UC-GEN-01 & UC-GEN-02**: Sinh cấu trúc Tóm tắt xuất viện và Báo cáo CĐHA bằng Template-based Generation (Mock LLM).
+- **UC-GEN-03 (Auto-fill)**: Điền tự động các thực thể (bệnh, triệu chứng, thuốc, xét nghiệm) và thông tin hành chính vào form mẫu. Loại bỏ các thực thể có bối cảnh phủ định.
+- **UC-GEN-04 (Uncertainty)**: Tự động đánh dấu cờ `[UNCERTAIN]` hoặc `[CẢNH BÁO]` đối với hồ sơ thiếu dữ liệu chẩn đoán/kết luận.
+- **UC-GEN-05**: Hỗ trợ bộ template khác nhau cho từng chuyên khoa (General, Cardiology, XRay).
+- Thêm 2 API POST `/generate/discharge` và `/generate/radiology` trong Inference Engine.
+### Files changed
+- ai_engine/main.py (MODIFIED)
+- ai_engine/core/generator.py (NEW) ⚠️ PROTECTED
+- ai_engine/test_generator.py (NEW)
+
 ## [2026-05-05] — Module 3: Trích xuất khái niệm lâm sàng (NER)
 ### Added
 - **UC-NER-01**: Nhận dạng 6 loại thực thể y khoa (DISEASE, SYMPTOM, DRUG, DOSAGE, TEST, PROCEDURE) bằng rule-based Regex và Dictionary.

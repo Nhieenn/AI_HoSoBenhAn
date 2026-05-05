@@ -29,6 +29,9 @@
 ### Module 3: Trích xuất khái niệm lâm sàng / NER (QC Pass: 2026-05-05)
 - ai_engine/core/ner.py
 
+### Module 4: Sinh nháp / Generation (QC Pass: 2026-05-05)
+- ai_engine/core/generator.py
+
 ### AI Inference Engine Entry (QC Pass: 2026-05-05)
 - ai_engine/main.py
 
