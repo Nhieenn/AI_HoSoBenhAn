@@ -33,6 +33,19 @@ def test_safety_checker():
     assert any("Tăng huyết áp" in w for w in hall_warnings), "Phải cảnh báo bịa bệnh Tăng huyết áp"
     assert any("Amlodipin" in w for w in hall_warnings), "Phải cảnh báo bịa thuốc Amlodipin"
 
+    # 3. Test Internal Conflict
+    patient_male = {"gender": "Nam", "age": 30}
+    conflict_draft_entities = [{"type": "DISEASE", "text": "U xơ tử cung"}]
+    conflict_warnings = checker.check_internal_conflict(patient_male, conflict_draft_entities)
+    assert len(conflict_warnings) == 1, "Phải phát hiện mâu thuẫn Nam - tử cung"
+    assert "tử cung" in conflict_warnings[0]
+    
+    patient_child = {"gender": "Nữ", "age": 5}
+    conflict_draft_entities_2 = [{"type": "DISEASE", "text": "Bệnh người già"}]
+    conflict_warnings_2 = checker.check_internal_conflict(patient_child, conflict_draft_entities_2)
+    assert len(conflict_warnings_2) == 1, "Phải phát hiện mâu thuẫn tuổi - lão khoa"
+    assert "người già" in conflict_warnings_2[0]
+
 if __name__ == "__main__":
     test_safety_checker()
     print("All Safety tests passed!")

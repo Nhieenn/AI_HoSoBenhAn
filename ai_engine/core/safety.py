@@ -51,14 +51,54 @@ class SafetyChecker:
                     
         return warnings
         
-    def process_safety_check(self, draft_text: str, original_entities: List[Dict[str, Any]], draft_entities: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def check_internal_conflict(self, patient_data: Dict[str, Any], draft_entities: List[Dict[str, Any]]) -> List[str]:
+        """
+        UC-SAFE-01: Kiểm tra mâu thuẫn nội bộ giữa thông tin bệnh nhân và thực thể sinh ra.
+        VD: Bệnh nhân nam nhưng có thông tin thai kỳ.
+        """
+        warnings = []
+        gender = patient_data.get("gender", "").lower()
+        age = patient_data.get("age", 0)
+        
+        # Tập hợp các từ khóa bệnh lý nhạy cảm giới tính/độ tuổi
+        female_only_keywords = ["thai", "tử cung", "buồng trứng", "kinh nguyệt", "tiền sản"]
+        male_only_keywords = ["tiền liệt tuyến", "tinh hoàn", "dương vật"]
+        pediatric_keywords = ["sơ sinh", "trẻ em", "nhi khoa"]
+        geriatric_keywords = ["lão khoa", "người già", "mãn kinh"]
+        
+        for e in draft_entities:
+            text = e.get("text", "").lower()
+            
+            # Kiểm tra mâu thuẫn giới tính
+            if gender in ["nam", "male"]:
+                if any(kw in text for kw in female_only_keywords):
+                    warnings.append(f"Mâu thuẫn nội bộ: Bệnh nhân Nam nhưng có thực thể '{e['text']}'")
+            elif gender in ["nữ", "female"]:
+                if any(kw in text for kw in male_only_keywords):
+                    warnings.append(f"Mâu thuẫn nội bộ: Bệnh nhân Nữ nhưng có thực thể '{e['text']}'")
+                    
+            # Kiểm tra mâu thuẫn độ tuổi
+            if isinstance(age, (int, float)):
+                if age > 18 and any(kw in text for kw in pediatric_keywords):
+                    warnings.append(f"Mâu thuẫn nội bộ: Bệnh nhân Người lớn ({age} tuổi) nhưng có thực thể '{e['text']}'")
+                elif age < 50 and any(kw in text for kw in geriatric_keywords):
+                    warnings.append(f"Mâu thuẫn nội bộ: Bệnh nhân chưa đến tuổi lão khoa ({age} tuổi) nhưng có thực thể '{e['text']}'")
+
+        return warnings
+        
+    def process_safety_check(self, draft_text: str, original_entities: List[Dict[str, Any]], draft_entities: List[Dict[str, Any]], patient_data: Dict[str, Any] = None) -> Dict[str, Any]:
         phi_warnings = self.check_phi_leak(draft_text)
         hallucination_warnings = self.check_hallucination(original_entities, draft_entities)
         
-        is_safe = len(phi_warnings) == 0 and len(hallucination_warnings) == 0
+        conflict_warnings = []
+        if patient_data:
+            conflict_warnings = self.check_internal_conflict(patient_data, draft_entities)
+        
+        is_safe = len(phi_warnings) == 0 and len(hallucination_warnings) == 0 and len(conflict_warnings) == 0
         
         return {
             "is_safe": is_safe,
             "phi_warnings": phi_warnings,
-            "hallucination_warnings": hallucination_warnings
+            "hallucination_warnings": hallucination_warnings,
+            "conflict_warnings": conflict_warnings
         }

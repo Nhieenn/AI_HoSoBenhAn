@@ -1,5 +1,31 @@
 # Changelog — AI_HoSoBenhAn
 
+## [2026-05-05] — Module 7: Audit và Bảo mật
+### Added
+- **UC-AUD-01**: Ghi log hoạt động chi tiết (sinh, duyệt, sửa, reject).
+- **UC-AUD-02**: Phân quyền vai trò (RBAC) cho DOCTOR, NURSE, ADMIN, RESEARCHER.
+- **UC-AUD-03**: Cô lập dữ liệu (On-premise), DataIsolator đảm bảo không gọi external API.
+- **UC-AUD-04**: Báo cáo minh bạch. TransparencyReporter xuất Model Card, Data Sheet, kiểm định SPIRIT-AI.
+- Thêm 7 API endpoint cho Audit: `/audit/log`, `/audit/logs`, `/audit/check-permission`, `/audit/verify-url`, `/audit/model-card`, `/audit/data-sheet`, `/audit/verify-protocol`.
+### Files changed
+- `ai_engine/main.py` (MODIFIED)
+- `ai_engine/core/audit.py` (NEW) ⚠️ PROTECTED
+- `ai_engine/test_audit.py` (NEW)
+
+## [2026-05-05] — Module 6: Kiểm soát an toàn và Workflow
+### Added
+- **UC-SAFE-01**: Hậu kiểm an toàn, thêm logic `check_internal_conflict` vào `safety.py`.
+- **UC-WF-01**: Review và Phê duyệt (Assisted Mode). Hỗ trợ DRAFT, APPROVED, REJECTED.
+- **UC-WF-02**: Active Learning từ phản hồi. Sử dụng `difflib` để trích xuất diff giữa draft gốc và draft đã duyệt.
+- **UC-WF-03**: Chế độ chạy ngầm (Silent Mode).
+- Thêm 3 API endpoint cho Workflow: `/workflow/draft/create`, `/workflow/draft/review`, `/workflow/generate/silent`.
+### Files changed
+- `ai_engine/main.py` (MODIFIED)
+- `ai_engine/core/safety.py` (MODIFIED) ⚠️ PROTECTED
+- `ai_engine/test_safety.py` (MODIFIED)
+- `ai_engine/core/workflow.py` (NEW) ⚠️ PROTECTED
+- `ai_engine/test_workflow.py` (NEW)
+
 ## [2026-05-05] — Module 1: Cập nhật Quản lý khuôn mẫu báo cáo (Template)
 ### Added
 - **UC-NORM-06**: Quản lý template/boilerplate theo khoa.

@@ -7,6 +7,8 @@ from core.ner import ClinicalNER
 from core.generator import ClinicalGenerator
 from core.rag import ClinicalRAG
 from core.safety import SafetyChecker
+from core.workflow import WorkflowEngine
+from core.audit import AuditLogger, RBACManager, DataIsolator, TransparencyReporter
 
 app = FastAPI(title="ViMedAI Inference Engine")
 normalizer = Normalizer()
@@ -15,6 +17,11 @@ ner_engine = ClinicalNER()
 generator = ClinicalGenerator()
 rag_engine = ClinicalRAG()
 safety_checker = SafetyChecker()
+workflow_engine = WorkflowEngine()
+audit_logger = AuditLogger()
+rbac_manager = RBACManager()
+data_isolator = DataIsolator()
+transparency_reporter = TransparencyReporter()
 
 class NormalizeRequest(BaseModel):
     text: str
@@ -75,11 +82,45 @@ class SafetyCheckRequest(BaseModel):
     draft_text: str
     original_entities: list[Dict]
     draft_entities: list[Dict]
+    patient_data: Optional[Dict[str, Any]] = None
 
 class SafetyCheckResponse(BaseModel):
     is_safe: bool
     phi_warnings: list[str]
     hallucination_warnings: list[str]
+    conflict_warnings: Optional[list[str]] = None
+
+class WorkflowCreateRequest(BaseModel):
+    generated_text: str
+    metadata: Optional[Dict[str, Any]] = None
+
+class WorkflowReviewRequest(BaseModel):
+    draft_id: str
+    status: str
+    updated_text: Optional[str] = None
+
+class WorkflowSilentRequest(BaseModel):
+    patient_data: Dict[str, Any]
+    entities: list[Dict]
+    department: Optional[str] = "General"
+    type: str = "discharge" # or "radiology"
+    raw_findings: Optional[str] = None
+
+class AuditLogRequest(BaseModel):
+    user_id: str
+    action: str
+    target_id: str
+    details: Optional[Dict[str, Any]] = None
+
+class RBACCheckRequest(BaseModel):
+    role: str
+    action: str
+
+class UrlVerifyRequest(BaseModel):
+    url: str
+
+class ProtocolVerifyRequest(BaseModel):
+    protocol_details: Dict[str, Any]
 
 @app.get("/")
 def read_root():
@@ -147,7 +188,8 @@ async def check_safety(request: SafetyCheckRequest):
         result = safety_checker.process_safety_check(
             draft_text=request.draft_text,
             original_entities=request.original_entities,
-            draft_entities=request.draft_entities
+            draft_entities=request.draft_entities,
+            patient_data=request.patient_data
         )
         return result
     except Exception as e:
@@ -166,6 +208,100 @@ async def check_faithfulness(request: FaithfulnessRequest):
     try:
         result = rag_engine.check_faithfulness(request.generated_text, request.context)
         return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/workflow/draft/create")
+async def workflow_create_draft(request: WorkflowCreateRequest):
+    try:
+        draft_id = workflow_engine.create_draft(request.generated_text, request.metadata)
+        return {"draft_id": draft_id, "message": "Draft created successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/workflow/draft/review")
+async def workflow_review_draft(request: WorkflowReviewRequest):
+    try:
+        # Update draft
+        draft = workflow_engine.review_draft(request.draft_id, request.status, request.updated_text)
+        
+        # If approved, extract feedback
+        feedback_result = None
+        if draft["status"] == "APPROVED":
+            feedback_result = workflow_engine.process_approved_draft(request.draft_id)
+            
+        return {"draft": draft, "feedback_processing": feedback_result}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/workflow/generate/silent")
+async def workflow_generate_silent(request: WorkflowSilentRequest):
+    try:
+        if request.type == "discharge":
+            func = generator.generate_discharge_summary
+            args = (request.patient_data, request.entities, request.department)
+        elif request.type == "radiology":
+            if not request.raw_findings:
+                raise ValueError("raw_findings is required for radiology generation")
+            func = generator.generate_radiology_report
+            args = (request.raw_findings, request.entities, request.department)
+        else:
+            raise ValueError("Invalid type. Must be discharge or radiology")
+            
+        result = workflow_engine.generate_silent(func, *args)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/audit/log")
+async def audit_log(request: AuditLogRequest):
+    try:
+        log_entry = audit_logger.log_action(request.user_id, request.action, request.target_id, request.details)
+        return {"message": "Log entry created", "log": log_entry}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/audit/logs")
+async def get_audit_logs():
+    try:
+        return {"logs": audit_logger.get_logs()}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/audit/check-permission")
+async def audit_check_permission(request: RBACCheckRequest):
+    try:
+        has_permission = rbac_manager.check_permission(request.role, request.action)
+        return {"role": request.role, "action": request.action, "has_permission": has_permission}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/audit/verify-url")
+async def audit_verify_url(request: UrlVerifyRequest):
+    try:
+        is_safe = data_isolator.verify_no_external_request(request.url)
+        return {"url": request.url, "is_safe": is_safe}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/audit/model-card")
+async def get_model_card():
+    try:
+        return transparency_reporter.generate_model_card()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/audit/data-sheet")
+async def get_data_sheet():
+    try:
+        return transparency_reporter.generate_data_sheet()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/audit/verify-protocol")
+async def verify_protocol(request: ProtocolVerifyRequest):
+    try:
+        return transparency_reporter.verify_clinical_protocol(request.protocol_details)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
