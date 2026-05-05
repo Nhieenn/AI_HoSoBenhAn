@@ -36,5 +36,6 @@
 3. Đọc docs/CRITICAL_PATHS.md nếu sửa backend
 4. Đọc docs/DATABASE.md nếu liên quan database
 5. Đọc docs/GIT_WORKFLOW.md để tuân thủ quy tắc quản lý mã nguồn
+6. Chủ động đọc REQUIREMENTS.md và CHANGELOG.md để nắm bắt bối cảnh và yêu cầu chi tiết
 
 # Codex sẽ xem xét kết quả của bạn khi bạn hoàn tất.
