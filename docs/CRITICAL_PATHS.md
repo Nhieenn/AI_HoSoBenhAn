@@ -18,10 +18,20 @@
 - **Quy tắc:** Mọi dữ liệu đi vào AI Engine phải qua hàm `mask_phi()` trước.
 
 ## 3. Danh sách PROTECTED FILES (KHÔNG ĐƯỢC SỬA TÙY TIỆN)
+
+### System Core & Auth (QC Pass: 2026-05-04)
 - `src/lib/auth.ts`: Logic xác thực đa tầng.
 - `src/middleware.ts`: Chặn truy cập trái phép cấp mạng.
 - `prisma/schema.prisma`: Cấu trúc DB y khoa.
+
+### Module 1: Chuẩn hóa & Xử lý văn bản (QC Pass: 2026-05-05)
 - `ai_engine/core/normalization.py`: Module chuẩn hóa.
+
+### Module 2: Ẩn danh dữ liệu (QC Pass: 2026-05-05)
 - `ai_engine/core/deid.py`: Module ẩn danh cốt lõi.
+
+### Module 3: Trích xuất khái niệm lâm sàng (QC Pass: 2026-05-05)
 - `ai_engine/core/ner.py`: Module trích xuất thực thể lâm sàng.
+
+### AI Inference Engine Entry (QC Pass: 2026-05-05)
 - `ai_engine/main.py`: Entry point chính của AI Engine.

@@ -14,14 +14,23 @@
 
 ## PROTECTED FILES — KHÔNG ĐƯỢC SỬA
 
+### System Core & Auth (QC Pass: 2026-05-04)
 - src/lib/auth.ts          ← Luồng xác thực
 - src/middleware.ts         ← Middleware bảo mật
 - prisma/schema.prisma     ← Chỉ sửa khi được yêu cầu rõ ràng
 - nginx.conf               ← Cấu hình reverse proxy
-- ai_engine/core/normalization.py ← Module 1: Chuẩn hóa & Xử lý văn bản
-- ai_engine/core/deid.py   ← Module 2: Ẩn danh dữ liệu (De-identification) cốt lõi
-- ai_engine/core/ner.py    ← Module 3: Trích xuất khái niệm lâm sàng (NER)
-- ai_engine/main.py        ← Entry point cho các tác vụ AI
+
+### Module 1: Chuẩn hóa & Xử lý văn bản (QC Pass: 2026-05-05)
+- ai_engine/core/normalization.py
+
+### Module 2: Ẩn danh dữ liệu / De-identification (QC Pass: 2026-05-05)
+- ai_engine/core/deid.py
+
+### Module 3: Trích xuất khái niệm lâm sàng / NER (QC Pass: 2026-05-05)
+- ai_engine/core/ner.py
+
+### AI Inference Engine Entry (QC Pass: 2026-05-05)
+- ai_engine/main.py
 
 # Cập nhật danh sách này khi có thêm file critical
 
