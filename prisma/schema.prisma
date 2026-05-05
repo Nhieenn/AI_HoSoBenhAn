@@ -33,12 +33,13 @@ enum DictCategory {
 }
 
 model Department {
-  id        String   @id @default(cuid())
-  name      String   @unique
-  users     User[]
+  id           String              @id @default(cuid())
+  name         String              @unique
+  users        User[]
   dictionaries NormalizationDict[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  templates    ReportTemplate[]
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
 }
 
 model User {
@@ -68,16 +69,16 @@ model MedicalRecord {
 }
 
 model AIDraft {
-  id        String      @id @default(cuid())
+  id        String        @id @default(cuid())
   record    MedicalRecord @relation(fields: [recordId], references: [id])
   recordId  String
   content   Json
-  doctor    User        @relation(fields: [doctorId], references: [id])
+  doctor    User          @relation(fields: [doctorId], references: [id])
   doctorId  String
-  status    DraftStatus @default(DRAFT)
-  version   Int         @default(1)
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+  status    DraftStatus   @default(DRAFT)
+  version   Int           @default(1)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
 }
 
 model NormalizationDict {
@@ -106,12 +107,23 @@ model AuditLog {
 model DeidAuditLog {
   id            String   @id @default(cuid())
   recordId      String
-  entityType    String   // e.g., NAME, PHONE, ADDRESS
-  originalValue String   // Encrypted value
-  maskedValue   String   // e.g., [NAME_1]
+  entityType    String // e.g., NAME, PHONE, ADDRESS
+  originalValue String // Encrypted value
+  maskedValue   String // e.g., [NAME_1]
   startPos      Int
   endPos        Int
   createdAt     DateTime @default(now())
 
   @@index([recordId])
+}
+
+model ReportTemplate {
+  id           String     @id @default(cuid())
+  name         String
+  requiredKeys Json
+  content      String     @db.Text
+  department   Department @relation(fields: [departmentId], references: [id])
+  departmentId String
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
 }

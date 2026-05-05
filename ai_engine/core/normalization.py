@@ -73,7 +73,18 @@ class Normalizer:
         unknown = [abbr for abbr in potential_abbrs if abbr.upper() not in dictionary]
         return list(set(unknown)) # Return unique unknown abbreviations
 
-    def process(self, text: str, dictionary: dict = None) -> dict:
+    def check_template_compliance(self, extracted_sections: dict, required_keys: list) -> list:
+        """FR-NORM-06: Check if drafted text matches the required template sections."""
+        warnings = []
+        actual_keys = list(extracted_sections.keys())
+        
+        for key in required_keys:
+            if key not in actual_keys:
+                warnings.append(f"Cảnh báo: Bản nháp đang thiếu mục bắt buộc [{key}] theo yêu cầu của Template.")
+                
+        return warnings
+
+    def process(self, text: str, dictionary: dict = None, required_keys: list = None) -> dict:
         """Full normalization pipeline."""
         dict_content = dictionary or {}
         
@@ -91,9 +102,15 @@ class Normalizer:
         
         for section, content in sections.items():
             sections[section] = self.expand_abbreviations(content, dict_content)
+            
+        # 5. Template Compliance Check
+        compliance_warnings = []
+        if required_keys:
+            compliance_warnings = self.check_template_compliance(sections, required_keys)
                 
         return {
             "full_text": text,
             "sections": sections,
-            "unknown_abbreviations": unknown_abbrs
+            "unknown_abbreviations": unknown_abbrs,
+            "compliance_warnings": compliance_warnings
         }

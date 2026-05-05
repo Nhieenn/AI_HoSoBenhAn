@@ -1,5 +1,16 @@
 # Changelog — AI_HoSoBenhAn
 
+## [2026-05-05] — Module 1: Cập nhật Quản lý khuôn mẫu báo cáo (Template)
+### Added
+- **UC-NORM-06**: Quản lý template/boilerplate theo khoa.
+- Logic AI: Cảnh báo sai lệch cấu trúc (Template Compliance Check) hoạt động bằng Rule-based matching.
+- CSDL: Thêm model `ReportTemplate` và seed dữ liệu mẫu.
+### Files changed
+- `prisma/schema.prisma` (MODIFIED)
+- `prisma/seed.ts` (MODIFIED)
+- `ai_engine/core/normalization.py` (MODIFIED) ⚠️ PROTECTED
+- `test_normalization.py` (MODIFIED)
+
 ## [2026-05-05] — Module 5: Truy hồi và Neo đầu ra (RAG)
 ### Added
 - **UC-RAG-01**: Quản lý kho tri thức y khoa. Lập chỉ mục phác đồ, hướng dẫn, từ điển quy ước bệnh viện vào không gian lưu trữ mô phỏng.

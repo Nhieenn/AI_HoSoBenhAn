@@ -33,6 +33,12 @@
 - Mô tả: Cập nhật từ điển viết tắt nội viện theo từng khoa/phòng.
 - Luồng chính: (Theo FR-NORM-05)
 
+### UC-NORM-06: Quản lý khuôn mẫu báo cáo
+- Ưu tiên: MUST
+- Actor: Admin, Hệ thống
+- Mô tả: Quản lý template/boilerplate theo khoa, cảnh báo sai lệch cấu trúc.
+- Luồng chính: (Theo FR-NORM-06)
+
 ---
 
 ## Module 2: Ẩn danh dữ liệu (De-identification)
@@ -125,7 +131,7 @@
 
 ---
 
-## Module 5: Truy hồi và Neo đầu ra (RAG)
+## Module 5: Truy hồi và Neo đầu ra (Modular RAG)
 
 ### UC-RAG-01: Quản lý kho tri thức y khoa
 - Ưu tiên: MUST
@@ -133,11 +139,17 @@
 - Mô tả: Lập chỉ mục phác đồ, hướng dẫn, từ điển quy ước bệnh viện.
 - Luồng chính: (Theo FR-RAG-01, FR-RAG-05)
 
-### UC-RAG-02: Truy hồi và Citation
+### UC-RAG-02: Truy hồi, Rerank và Citation
 - Ưu tiên: MUST
 - Actor: Hệ thống, Bác sĩ
-- Mô tả: Tìm tài liệu liên quan và gắn trích dẫn nguồn vào bản thảo AI sinh ra.
-- Luồng chính: (Theo FR-RAG-02, FR-RAG-03)
+- Mô tả: Tìm tài liệu liên quan, xếp hạng lại (rerank) và gắn trích dẫn nguồn.
+- Luồng chính: (Theo FR-RAG-02, FR-RAG-03, FR-RAG-04)
+
+### UC-RAG-03: Kiểm tra độ trung thực (Faithfulness check)
+- Ưu tiên: MUST
+- Actor: Hệ thống
+- Mô tả: Kiểm tra mỗi câu trong output có thực sự được hỗ trợ bởi tài liệu retrieval.
+- Luồng chính: (Theo FR-RAG-06)
 
 ---
 
@@ -188,3 +200,23 @@
 - Actor: Hệ thống
 - Mô tả: Đảm bảo không truyền dữ liệu bệnh nhân ra ngoài network bệnh viện.
 - Luồng chính: (Theo FR-AUD-04)
+
+### UC-AUD-04: Báo cáo minh bạch theo chuẩn quốc tế
+- Ưu tiên: MUST
+- Actor: Admin, Hệ thống
+- Mô tả: Xuất báo cáo Model Card, Data Sheet và tuân thủ CONSORT-AI/SPIRIT-AI.
+- Luồng chính: (Theo BR-06)
+
+---
+
+## Module 8: Huấn luyện mô hình (Model Training Pipeline)
+
+### UC-TRAIN-01: Thu thập và gán nhãn dữ liệu (Active Learning)
+- Ưu tiên: SHOULD
+- Actor: Hệ thống, Bác sĩ, Nhà nghiên cứu
+- Mô tả: Trích xuất lịch sử chỉnh sửa nháp (diff) để làm dataset huấn luyện.
+
+### UC-TRAIN-02: Pipeline Fine-tuning
+- Ưu tiên: MUST (Giai đoạn 2)
+- Actor: Hệ thống, Admin
+- Mô tả: Tích hợp quy trình DAPT và SFT (LoRA/QLoRA) cho mô hình LLM chuyên biệt.

@@ -6,6 +6,7 @@ from core.deid import DeIdentifier
 from core.ner import ClinicalNER
 from core.generator import ClinicalGenerator
 from core.rag import ClinicalRAG
+from core.safety import SafetyChecker
 
 app = FastAPI(title="ViMedAI Inference Engine")
 normalizer = Normalizer()
@@ -13,15 +14,18 @@ deidentifier = DeIdentifier()
 ner_engine = ClinicalNER()
 generator = ClinicalGenerator()
 rag_engine = ClinicalRAG()
+safety_checker = SafetyChecker()
 
 class NormalizeRequest(BaseModel):
     text: str
     dictionary: Optional[Dict[str, str]] = None
+    required_keys: Optional[list[str]] = None
 
 class NormalizeResponse(BaseModel):
     full_text: str
     sections: Dict[str, str]
     unknown_abbreviations: list[str]
+    compliance_warnings: Optional[list[str]] = None
 
 class DeIdentifyRequest(BaseModel):
     text: str
@@ -67,6 +71,16 @@ class RAGRetrieveResponse(BaseModel):
     combined_context: str
     citations: list[Dict]
 
+class SafetyCheckRequest(BaseModel):
+    draft_text: str
+    original_entities: list[Dict]
+    draft_entities: list[Dict]
+
+class SafetyCheckResponse(BaseModel):
+    is_safe: bool
+    phi_warnings: list[str]
+    hallucination_warnings: list[str]
+
 @app.get("/")
 def read_root():
     return {"message": "ViMedAI Inference Engine is running"}
@@ -74,7 +88,7 @@ def read_root():
 @app.post("/normalize", response_model=NormalizeResponse)
 async def normalize_text(request: NormalizeRequest):
     try:
-        result = normalizer.process(request.text, request.dictionary)
+        result = normalizer.process(request.text, request.dictionary, request.required_keys)
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -127,6 +141,18 @@ async def retrieve_context(request: RAGRetrieveRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/safe/check", response_model=SafetyCheckResponse)
+async def check_safety(request: SafetyCheckRequest):
+    try:
+        result = safety_checker.process_safety_check(
+            draft_text=request.draft_text,
+            original_entities=request.original_entities,
+            draft_entities=request.draft_entities
+        )
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=8001)
