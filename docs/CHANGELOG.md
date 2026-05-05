@@ -1,5 +1,16 @@
 # Changelog — AI_HoSoBenhAn
 
+## [2026-05-05] — Module 5: Truy hồi và Neo đầu ra (RAG)
+### Added
+- **UC-RAG-01**: Quản lý kho tri thức y khoa. Lập chỉ mục phác đồ, hướng dẫn, từ điển quy ước bệnh viện vào không gian lưu trữ mô phỏng.
+- **UC-RAG-02**: Truy hồi và Citation. Tìm kiếm tài liệu liên quan và gắn trích dẫn nguồn (citation) vào ngữ cảnh trả về.
+- Thiết kế interface `BaseRetriever` hỗ trợ dễ dàng thay thế sang Vector DB thực tế (ChromaDB) sau này.
+- Thêm 2 API POST `/rag/index` và `/rag/retrieve` vào AI Inference Engine.
+### Files changed
+- `ai_engine/main.py` (MODIFIED)
+- `ai_engine/core/rag.py` (NEW) ⚠️ PROTECTED
+- `ai_engine/test_rag.py` (NEW)
+
 ## [2026-05-05] — Module 4: Sinh nháp (Generation)
 ### Added
 - **UC-GEN-01 & UC-GEN-02**: Sinh cấu trúc Tóm tắt xuất viện và Báo cáo CĐHA bằng Template-based Generation (Mock LLM).

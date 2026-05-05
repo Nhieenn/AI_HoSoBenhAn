@@ -5,12 +5,14 @@ from core.normalization import Normalizer
 from core.deid import DeIdentifier
 from core.ner import ClinicalNER
 from core.generator import ClinicalGenerator
+from core.rag import ClinicalRAG
 
 app = FastAPI(title="ViMedAI Inference Engine")
 normalizer = Normalizer()
 deidentifier = DeIdentifier()
 ner_engine = ClinicalNER()
 generator = ClinicalGenerator()
+rag_engine = ClinicalRAG()
 
 class NormalizeRequest(BaseModel):
     text: str
@@ -46,6 +48,24 @@ class GenerateRadiologyRequest(BaseModel):
 
 class GenerateResponse(BaseModel):
     generated_text: str
+
+class RAGIndexRequest(BaseModel):
+    content: str
+    source: str = "Tài liệu Y khoa"
+    metadata: Optional[Dict[str, Any]] = None
+
+class RAGIndexResponse(BaseModel):
+    document_id: str
+    message: str
+
+class RAGRetrieveRequest(BaseModel):
+    query: str
+    top_k: int = 3
+
+class RAGRetrieveResponse(BaseModel):
+    query: str
+    combined_context: str
+    citations: list[Dict]
 
 @app.get("/")
 def read_root():
@@ -88,6 +108,22 @@ async def generate_radiology(request: GenerateRadiologyRequest):
     try:
         text = generator.generate_radiology_report(request.raw_findings, request.entities, request.department)
         return {"generated_text": text}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/rag/index", response_model=RAGIndexResponse)
+async def index_document(request: RAGIndexRequest):
+    try:
+        doc_id = rag_engine.index_document(request.content, request.source, request.metadata)
+        return {"document_id": doc_id, "message": "Document indexed successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/rag/retrieve", response_model=RAGRetrieveResponse)
+async def retrieve_context(request: RAGRetrieveRequest):
+    try:
+        result = rag_engine.retrieve_context(request.query, request.top_k)
+        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

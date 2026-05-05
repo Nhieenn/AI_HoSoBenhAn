@@ -36,5 +36,8 @@
 ### Module 4: Sinh nháp / Generation (QC Pass: 2026-05-05)
 - `ai_engine/core/generator.py`: Module sinh văn bản (Discharge, Radiology).
 
+### Module 5: Truy hồi và Neo đầu ra / RAG (QC Pass: 2026-05-05)
+- `ai_engine/core/rag.py`: Module RAG mô phỏng.
+
 ### AI Inference Engine Entry (QC Pass: 2026-05-05)
 - `ai_engine/main.py`: Entry point chính của AI Engine.
