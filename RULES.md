@@ -35,6 +35,13 @@
 ### Module 5: Truy hồi và Neo đầu ra / RAG (QC Pass: 2026-05-05)
 - ai_engine/core/rag.py
 
+### Module 6: Kiểm soát an toàn và Workflow (QC Pass: 2026-05-05)
+- ai_engine/core/safety.py
+- ai_engine/core/workflow.py
+
+### Module 7: Audit và Bảo mật (QC Pass: 2026-05-05)
+- ai_engine/core/audit.py
+
 ### AI Inference Engine Entry (QC Pass: 2026-05-05)
 - ai_engine/main.py
 
