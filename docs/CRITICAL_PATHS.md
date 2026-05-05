@@ -19,6 +19,9 @@
 
 ## 3. Danh sách PROTECTED FILES (KHÔNG ĐƯỢC SỬA TÙY TIỆN)
 - `src/lib/auth.ts`: Logic xác thực đa tầng.
-- `ai-engine/core/deid.py`: Module ẩn danh cốt lõi.
-- `prisma/schema.prisma`: Cấu trúc DB y khoa.
 - `src/middleware.ts`: Chặn truy cập trái phép cấp mạng.
+- `prisma/schema.prisma`: Cấu trúc DB y khoa.
+- `ai_engine/core/normalization.py`: Module chuẩn hóa.
+- `ai_engine/core/deid.py`: Module ẩn danh cốt lõi.
+- `ai_engine/core/ner.py`: Module trích xuất thực thể lâm sàng.
+- `ai_engine/main.py`: Entry point chính của AI Engine.

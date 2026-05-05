@@ -18,6 +18,10 @@
 - src/middleware.ts         ← Middleware bảo mật
 - prisma/schema.prisma     ← Chỉ sửa khi được yêu cầu rõ ràng
 - nginx.conf               ← Cấu hình reverse proxy
+- ai_engine/core/normalization.py ← Module 1: Chuẩn hóa & Xử lý văn bản
+- ai_engine/core/deid.py   ← Module 2: Ẩn danh dữ liệu (De-identification) cốt lõi
+- ai_engine/core/ner.py    ← Module 3: Trích xuất khái niệm lâm sàng (NER)
+- ai_engine/main.py        ← Entry point cho các tác vụ AI
 
 # Cập nhật danh sách này khi có thêm file critical
 
