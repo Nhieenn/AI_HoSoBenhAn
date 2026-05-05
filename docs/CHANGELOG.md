@@ -11,6 +11,16 @@
 - `ai_engine/core/normalization.py` (MODIFIED) ⚠️ PROTECTED
 - `test_normalization.py` (MODIFIED)
 
+## [2026-05-05] — Module 5: Cập nhật Truy hồi và Neo đầu ra (Modular RAG)
+### Added
+- Nâng cấp từ Naïve RAG sang kiến trúc Modular RAG.
+- Thêm `MockReranker` vào quy trình tìm kiếm tài liệu. Tự động ưu tiên (+2.0 điểm) các tài liệu chứa cụm từ khớp chính xác (exact phrase).
+- **UC-RAG-03**: Thêm tính năng Faithfulness Check (`POST /rag/faithfulness`). Kiểm tra chéo các thực thể và thông số số liệu do AI sinh ra so với Context nguồn để phát hiện Hallucination.
+### Files changed
+- `ai_engine/core/rag.py` (MODIFIED) ⚠️ PROTECTED
+- `ai_engine/main.py` (MODIFIED)
+- `ai_engine/test_rag.py` (MODIFIED)
+
 ## [2026-05-05] — Module 5: Truy hồi và Neo đầu ra (RAG)
 ### Added
 - **UC-RAG-01**: Quản lý kho tri thức y khoa. Lập chỉ mục phác đồ, hướng dẫn, từ điển quy ước bệnh viện vào không gian lưu trữ mô phỏng.

@@ -153,6 +153,22 @@ async def check_safety(request: SafetyCheckRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+class FaithfulnessRequest(BaseModel):
+    generated_text: str
+    context: str
+
+class FaithfulnessResponse(BaseModel):
+    is_faithful: bool
+    unsupported_claims: list[str]
+
+@app.post("/rag/faithfulness", response_model=FaithfulnessResponse)
+async def check_faithfulness(request: FaithfulnessRequest):
+    try:
+        result = rag_engine.check_faithfulness(request.generated_text, request.context)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8001)

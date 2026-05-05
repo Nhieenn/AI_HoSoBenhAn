@@ -61,13 +61,33 @@ class MockRetriever(BaseRetriever):
         return results[:top_k]
 
 
+class BaseReranker:
+    """
+    Interface cơ sở cho Reranker (VD: Cross-Encoder).
+    """
+    def rerank(self, query: str, results: List[RetrievalResult]) -> List[RetrievalResult]:
+        raise NotImplementedError
+
+class MockReranker(BaseReranker):
+    """
+    Mô phỏng Reranker: Tăng điểm nếu document chứa cụm từ chính xác (exact phrase).
+    """
+    def rerank(self, query: str, results: List[RetrievalResult]) -> List[RetrievalResult]:
+        query_lower = query.lower()
+        for res in results:
+            if query_lower in res.document.content.lower():
+                res.score += 2.0  # Tăng điểm mạnh nếu khớp cả cụm
+            
+        results.sort(key=lambda x: x.score, reverse=True)
+        return results
 class ClinicalRAG:
     """
-    Module 5: Truy hồi và Neo đầu ra (RAG)
+    Module 5: Truy hồi và Neo đầu ra (Modular RAG)
     """
-    def __init__(self, retriever: Optional[BaseRetriever] = None):
+    def __init__(self, retriever: Optional[BaseRetriever] = None, reranker: Optional[BaseReranker] = None):
         # Cho phép Dependency Injection. Mặc định dùng MockRetriever nếu không truyền.
         self.retriever = retriever or MockRetriever()
+        self.reranker = reranker or MockReranker()
         
     def index_document(self, content: str, source: str = "Tài liệu Y khoa", metadata: Optional[Dict[str, Any]] = None) -> str:
         """
@@ -82,10 +102,14 @@ class ClinicalRAG:
         
     def retrieve_context(self, query: str, top_k: int = 3) -> Dict[str, Any]:
         """
-        UC-RAG-02: Truy hồi và Citation.
-        Tìm kiếm ngữ cảnh liên quan và trả về cùng thông tin trích dẫn.
+        UC-RAG-02: Truy hồi, Rerank và Citation.
         """
-        results = self.retriever.retrieve(query, top_k=top_k)
+        # Retrieval Stage (lấy nhiều hơn để rerank)
+        results = self.retriever.retrieve(query, top_k=top_k * 2)
+        
+        # Rerank Stage
+        results = self.reranker.rerank(query, results)
+        results = results[:top_k]
         
         contexts = []
         citations = []
@@ -102,4 +126,26 @@ class ClinicalRAG:
             "query": query,
             "combined_context": "\n\n".join(contexts),
             "citations": citations
+        }
+
+    def check_faithfulness(self, generated_text: str, context: str) -> Dict[str, Any]:
+        """
+        UC-RAG-03: Kiểm tra độ trung thực (Faithfulness Check).
+        """
+        unsupported_claims = []
+        
+        # Rule đơn giản: Trích xuất các thực thể In Hoa (VD: Paracetamol) hoặc 
+        # số đi kèm đơn vị (VD: 39 độ, 500mg) từ generated_text. Dùng \w để hỗ trợ tiếng Việt.
+        entities = re.findall(r'\b[A-ZĐ][\w]+\b|\b\d+(?:\.\d+)?\s*\w+\b', generated_text)
+        
+        context_lower = context.lower()
+        for entity in entities:
+            # Bỏ qua các từ thông thường như "HÀNH CHÍNH" (uppercase all) do regex trên chỉ bắt Title Case
+            if entity.lower() not in context_lower:
+                unsupported_claims.append(entity)
+                
+        is_faithful = len(unsupported_claims) == 0
+        return {
+            "is_faithful": is_faithful,
+            "unsupported_claims": list(set(unsupported_claims))
         }
