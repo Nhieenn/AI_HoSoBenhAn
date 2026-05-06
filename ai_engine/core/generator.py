@@ -91,7 +91,7 @@ KẾT QUẢ CHẨN ĐOÁN HÌNH ẢNH
         # Cải thiện phần Chẩn đoán: Sử dụng RAG (Truy xuất kiến thức)
         diagnosis = patient_data.get("diagnosis", "")
         if not diagnosis:
-            low_symptoms = symptoms.lower()
+            low_symptoms = (symptoms + " " + raw_reason).lower()
             
             # ƯU TIÊN 1: Tra cứu từ RAG (Module 5)
             rag_context = ""
@@ -150,6 +150,9 @@ KẾT QUẢ CHẨN ĐOÁN HÌNH ẢNH
                     
                 if "Thoát vị đĩa đệm" in rag_context and "tê bì" in low_symptoms:
                     diagnoses_list.append("Theo dõi Thoát vị đĩa đệm cột sống")
+                    
+                if "run" in low_symptoms and ("chậm chạp" in low_symptoms or "nghỉ ngơi" in low_symptoms):
+                    diagnoses_list.append("Bệnh Parkinson")
                     
                 # Lấy thêm bệnh từ Top 1 RAG nếu chưa có trong danh sách
                 if results["citations"] and results["citations"][0]["score"] > 0.6:

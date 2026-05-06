@@ -37,7 +37,8 @@ class ClinicalNER:
                 r"phù nề", r"phù chân", r"phù", r"tĩnh mạch cổ nổi", r"nhìn mờ", r"mắt đỏ", r"cộm", r"vàng da",
                 r"khạc đờm", r"khò khè", r"tức ngực", r"sụt cân", r"đầy bụng", r"chướng bụng", r"mệt mỏi", r"chán ăn",
                 r"rét run", r"vã mồ hôi", r"nhức mỏi", r"da xanh xao", r"đắng miệng", r"khát nước",
-                r"bóp nghẹt", r"sau xương ức", r"vận động gắng sức"
+                r"bóp nghẹt", r"sau xương ức", r"vận động gắng sức",
+                r"đau nhức dữ dội", r"đau quặn", r"từng cơn", r"vùng bụng dưới", r"chóng mặt", r"xây xẩm", r"tê rần", r"nửa người", r"gốc ngón tay cái", r"đau buốt"
             ],
             "DRUG": [r"paracetamol", r"amlodipin", r"aspirin", r"metformin", r"clopidogrel", r"ppi", r"nitroglycerin"],
             "DOSAGE": [r"\d+\s*mg", r"\d+\s*ml", r"\d+\s*viên", r"\d+\s*lần/ngày", r"\d+\s*g"],
