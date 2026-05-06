@@ -1,0 +1,21 @@
+fastapi
+uvicorn
+pydantic
+python-multipart
+# AI Frameworks
+torch --index-url https://download.pytorch.org/whl/cu118
+transformers
+accelerate
+bitsandbytes
+peft
+# NLP & NER
+spacy
+pyvi
+scikit-learn
+# RAG & Vector DB
+faiss-cpu
+sentence-transformers
+# Utils
+numpy
+pandas
+python-dotenv

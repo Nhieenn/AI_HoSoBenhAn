@@ -1,0 +1,20 @@
+{
+  "symptoms": [
+    "hầm hập",
+    "rột rột",
+    "đau lan",
+    "chướng bụng",
+    "ợ chua"
+  ],
+  "top_citation": {
+    "id": "836b5bba-e903-4fe5-a035-752640723c46",
+    "source": "Phác đồ Ngoại khoa",
+    "text_snippet": "Viêm tụy cấp: Đau bụng dữ dội vùng trên rốn, đau lan ra sau lưng, nôn nhiều. Bụng chướng, ấn đau thư",
+    "score": 0.9619853641390128
+  },
+  "all_citations": [
+    "Phác đồ Ngoại khoa: Viêm tụy cấp: Đau bụng dữ dội vùng trên rốn, đau l",
+    "Phác đồ Ngoại khoa: Viêm tụy cấp: Đau bụng dữ dội vùng trên rốn, đau l",
+    "YouMed: Trào ngược dịch mật: Trào ngược dịch mật là gì? Ng"
+  ]
+}

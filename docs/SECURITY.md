@@ -1,31 +1,26 @@
-# Quy Tắc Bảo Mật — AI_HoSoBenhAn
+# Chính sách Bảo mật — ViMedAI
 
-## 1. Input Validation
-- MỌI API endpoint phải có Zod/Joi schema validation
-- Validate TRƯỚC KHI xử lý bất kỳ logic nào
-- Sanitize HTML input: loại bỏ <script>, SQL keywords
-- Giới hạn độ dài input (max 255 cho text, max 10000 cho textarea)
+## 1. Nguyên tắc Ẩn danh (De-identification)
+- **Tự động hóa:** Hệ thống bắt buộc sử dụng NER để phát hiện và che giấu 18 loại thông tin định danh (theo chuẩn HIPAA cải biên cho Việt Nam).
+- **Pseudonymization:** Sử dụng mã giả định thay cho tên thật (vd: Patient A, Patient B) để duy trì tính logic trong văn bản mà không lộ danh tính.
 
-## 2. Authentication & Authorization
-- Sử dụng JWT với expiry time hợp lý (access: 15m, refresh: 7d)
-- Mọi API private PHẢI có middleware auth check
-- Phân quyền theo role: Admin / Manager / User
-- Password: bcrypt hash, minimum 8 ký tự
+## 2. Bảo mật Dữ liệu (Data Security)
+- **Mã hóa:** 
+  - Dữ liệu tĩnh (At-rest): Mã hóa AES-256 cho các trường PHI trong DB.
+  - Dữ liệu di chuyển (In-transit): Bắt buộc dùng TLS 1.3 trong mạng nội bộ.
+- **On-premise Isolation:** Toàn bộ hệ thống không có kết nối internet ra ngoài. Các bộ thư viện và mô hình AI phải được quét mã độc trước khi đưa vào mạng nội bộ.
 
-## 3. Database
-- CHỈ dùng ORM (Prisma) — TUYỆT ĐỐI không raw SQL
-- Parameterized queries cho mọi trường hợp
-- Backup database tự động hàng ngày
-- Không lưu sensitive data dạng plaintext
+## 3. Quản lý Truy cập (Access Control)
+- **RBAC:** Phân quyền nghiêm ngặt giữa Bác sĩ điều trị, Bác sĩ CĐHA, và Admin.
+- **MFA:** Bắt buộc xác thực 2 yếu tố cho các tài khoản có quyền Quản trị hoặc truy cập Audit Log.
+- **Session Timeout:** Tự động đăng xuất sau 15 phút không hoạt động để tránh rủi ro tại máy trạm bác sĩ.
 
-## 4. API Security
-- Rate limiting: 100 req/phút/IP (chung), 10 req/phút (login)
-- CORS: chỉ cho phép domain production
-- Security headers: Helmet config (HSTS, XSS, nosniff)
-- Không expose stack trace trong error response
+## 4. Nhật ký Giám sát (Audit Logging)
+- Hệ thống ghi lại:
+  - Ai đã xem hồ sơ nào?
+  - Ai đã phê duyệt bản thảo AI?
+  - Nội dung gốc vs Nội dung đã sửa (Diff).
+- Log được lưu trữ tại phân vùng riêng, không cho phép xóa/sửa.
 
-## 5. Infrastructure
-- SSL/HTTPS bắt buộc
-- Firewall: chỉ mở port 80, 443, 22
-- SSH key-only (disable password auth)
-- Environment variables cho secrets (.env — KHÔNG commit git)
+## 5. Phòng chống Hallucination (Safety Layer)
+- Áp dụng kỹ thuật **Self-Correction** và **Cross-check** với dữ liệu gốc từ HIS để cảnh báo bác sĩ nếu AI sinh ra thông tin sai lệch về lâm sàng (vd: sai liều thuốc).

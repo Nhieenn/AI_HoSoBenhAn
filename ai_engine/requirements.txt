@@ -1,0 +1,17 @@
+fastapi
+uvicorn
+pydantic
+python-multipart
+torch
+transformers
+accelerate
+bitsandbytes
+peft
+spacy
+pyvi
+scikit-learn
+faiss-cpu
+sentence-transformers
+numpy
+pandas
+python-dotenv

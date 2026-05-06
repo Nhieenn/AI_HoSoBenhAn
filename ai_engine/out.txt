@@ -1,0 +1,24 @@
+{
+  "query": "khó thở, ho",
+  "combined_context": "Bụi phổi: Bệnh bụi phổi là một bệnh nghề nghiệp, liên quan tới môi trường làm việc nhiều bụi bẩn độc hại chưa có điều trị hiệu quả cho bệnh bụi phổi, việc phòng ngừa là quan trọng. Triệu chứng: Bệnh bụi phổi cần một thời gian dài để hình thành. Do đó các triệu chứng có thể không biểu hiện ngay khi tiếp xúc với bụi. Thậm chí người bệnh khi khởi phát không còn làm trong môi trường bụi bặm nữa. Đôi khi người bệnh không có bất cứ triệu chứng nào, đặc biệt ở giai đoạn sớm. Khi bệnh tiến triển, một số biểu hiện chúng ta cần lưu ý: Khó thở, hoặc cảm giác hụt hơi khi vận động, như đi bộ hoặc leo cầu thang. Trường hợp nặng hơn người bệnh có thể khó thở cả khi nghỉ ngơi.\nHo, có thể có đàm.\nCảm giác nặng ngực. Những biểu hiện này cũng thường gặp khi cảm lạnh hoặc nhiễm trùng hô hấp nói chung. Tuy nhiên ở bệnh bụi phổi chúng dai dẳng hơn và cần nên nghĩ tới khi người bệnh từng làm việc trong môi trường nhiều bụi.\n\nNóng rát bao tử: Nóng rát bao tử là một dấu hiệu thường gặp ở bao tử(dạ dày). Cùng Thạc sĩ, Bác sĩ Thái Việt Nguyên tìm hiểu qua bài viết sau Triệu chứng: Một số triệu chứng điển hình có thể kèm theo nóng rát dạ dày. Và nhờ những triệu chứng kèm theo này mà các bác sĩ có thể chẩn đoán chính xác bệnh. Một số triệu chứng kèm theo thường gặp bao gồm: Buồn nôn, nôn.\nĐau quặn bụng.\nCảm giác đầy bụng, chướng bụng, khó tiêu.\nỢ nóng, ở chua, trớ.\nGiảm cảm giác ngon miệng.\nMệt mỏi, suy kiệt.\nHạ huyết áp, chóng mặt, kém tập trung.\nTiêu chảy hoặc táo bón.\nMột số triệu chứng kèm theo ít gặp hơn bao gồm:\nNóng rát ở vùng ngực, tức ngực.\nKhó thở, ho kéo dài.\nNôn ra máu, tiêu phân đen.\nĐau họng, chảy nước mũi,… Ợ nóng là triệu chứng thường gặp\n\nÁp-xe phổi: Áp-xe phổi là một dạng nhiễm trùng ở phổi. Sau đây là hững hiểu biết cơ bản các triệu chứng, mức độ nguy hiểm, cách điều trị và phòng ngừa. Triệu chứng: Các triệu chứng của áp-xe phổi khá giống với viêm phổi nhưng kéo dài hơn. Một triệu chứng khá nổi bật là ho ra đàm. Đàm có thể lẫn máu hoặc mủ, mùi hôi. Một số triệu chứng khác cũng thường gặp là: Hơi thở hôi.\nSốt.\nĐau ngực.\nKhó thở.\nChảy mồ hôi về đêm.\nSụt cân.\nMệt mỏi.\nChán ăn. Các biến chứng của bệnh",
+  "citations": [
+    {
+      "id": "2b7f8651-88ea-443f-b72f-90854c6ce86d",
+      "source": "YouMed",
+      "text_snippet": "Bụi phổi: Bệnh bụi phổi là một bệnh nghề nghiệp, liên quan tới môi trường làm việc nhiều bụi bẩn độc",
+      "score": 2.999666777740753
+    },
+    {
+      "id": "97cf76fd-bb2e-422e-95ca-35cded4f0afa",
+      "source": "YouMed",
+      "text_snippet": "Nóng rát bao tử: Nóng rát bao tử là một dấu hiệu thường gặp ở bao tử(dạ dày). Cùng Thạc sĩ, Bác sĩ T",
+      "score": 2.999666777740753
+    },
+    {
+      "id": "dffed401-0ca4-4470-a0a0-395f08469544",
+      "source": "YouMed",
+      "text_snippet": "Áp-xe phổi: Áp-xe phổi là một dạng nhiễm trùng ở phổi. Sau đây là hững hiểu biết cơ bản các triệu ch",
+      "score": 0.9996667777407531
+    }
+  ]
+}
