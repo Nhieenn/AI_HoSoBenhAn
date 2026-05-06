@@ -11,6 +11,7 @@
 5. PHẢI đọc CRITICAL_PATHS.md trước khi sửa bất kỳ file backend nào
 6. PHẢI đọc DATABASE.md trước khi thêm/sửa bảng hoặc quan hệ
 7. PHẢI chạy build test trước khi báo "hoàn thành"
+8. PHẢI đọc RUN_GUIDE.md trước khi khởi chạy Backend/Frontend hoặc debug lỗi kết nối
 
 ## PROTECTED FILES — KHÔNG ĐƯỢC SỬA
 
@@ -66,5 +67,6 @@
 4. Đọc docs/DATABASE.md nếu liên quan database
 5. Đọc docs/GIT_WORKFLOW.md để tuân thủ quy tắc quản lý mã nguồn
 6. Chủ động đọc REQUIREMENTS.md và CHANGELOG.md để nắm bắt bối cảnh và yêu cầu chi tiết
+7. BẮT BUỘC đọc RUN_GUIDE.md và PROJECT_STATUS.md để nắm rõ cách khởi động hệ thống và tình trạng hiện tại của dự án
 
 # Codex sẽ xem xét kết quả của bạn khi bạn hoàn tất.
