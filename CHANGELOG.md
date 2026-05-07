@@ -1,6 +1,23 @@
 # CHANGELOG
 
-## [Unreleased] - 2026-05-06
+## [Unreleased] - 2026-05-07
+### Added
+- **RBAC Standardization:** Triển khai chặt chẽ ma trận phân quyền với chính xác 4 Roles (Admin, Doctor, Nurse, Researcher) theo đúng tài liệu BA.
+- **Route Protection (Client-side):** Áp dụng lớp khiên bảo vệ trong `LayoutWrapper.tsx`, ngăn chặn Điều dưỡng truy cập sai luồng (tự đẩy về `/queue`), và cấm Admin/Researcher tự ý truy cập các trang chuyên môn.
+- **Demo Accounts:** Cập nhật màn hình Đăng nhập nhanh với 4 thẻ tài khoản đại diện cho 4 phân quyền.
+
+### Changed
+- Dọn dẹp hoàn toàn các logic dư thừa liên quan đến phân quyền `RADIOLOGIST`.
+- Cấu trúc lại cách lưu User Context trong `localStorage` (lưu JSON chứa role thay vì chỉ `isLoggedIn`).
+
+### Fixed
+- **Mobile Horizontal Overflow (Lỗi tràn viền ngang):** 
+  - Khóa chặt khung xương website bằng `max-width: 100%` và `overflow-x: hidden`.
+  - Bổ sung `flex-wrap: wrap` cho hàng loạt các thành phần nút bấm và thẻ tag trên trang Dashboard, Queue, Bệnh án và CĐHA.
+- **Lỗi hiển thị tờ giấy A4 trên điện thoại:** Giảm padding của `.paper` và thiết lập lại grid cho khung Editor để hiển thị vừa vặn trên các màn hình nhỏ (Google Pixel 7).
+- **Lỗi tương phản nút đăng nhập:** Cập nhật CSS để chữ màu xanh đậm trên nền vàng nổi bật khi chọn tài khoản Demo.
+
+## [Phase 1 POC - RAG & Models] - 2026-05-06
 ### Added
 - **PROJECT_STATUS.md:** Tạo báo cáo tiến độ chi tiết, đánh giá thực trạng POC, giải thích kiến trúc Local LLM (On-Premise) và nút thắt dữ liệu RAG.
 - **Quy tắc AI (RULES.md):** Bổ sung chỉ thị bắt buộc các AI Agent tương lai phải đọc `RUN_GUIDE.md` và `PROJECT_STATUS.md` trước khi thao tác.

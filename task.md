@@ -41,3 +41,15 @@ Dưới đây là danh sách nhiệm vụ chi tiết để hoàn thiện hệ th
 ---
 *Ghi chú: Mọi tính năng giao diện đã được đồng bộ với Mockup v2 mới nhất của công ty.*
 *Trạng thái: [ ] Chưa làm | [/] Đang làm | [x] Hoàn thành*
+
+## 5. Tối ưu Giao diện Điện thoại (Mobile Responsive)
+- [x] **Làm giao diện Header/Sidebar trượt (Menu ☰)**: Ẩn Sidebar mặc định trên màn hình nhỏ, thêm nút Hamburger vào Topbar.
+- [x] **Bảng danh sách bệnh nhân (Queue)**: Sử dụng CSS biến Table thành dạng Thẻ (Card) trên mobile để hiển thị gọn gàng hơn.
+- [x] **Màn hình Đọc phim (Radiology)**: Đưa giao diện 3 cột thành 1 cột xếp dọc (hoặc dùng Tab) trên điện thoại.
+- [x] **Thanh DemoNav**: Rút gọn thanh điều hướng góc dưới phải để không chắn màn hình nội dung chính.
+
+## 6. Phân quyền và Cá nhân hóa (RBAC)
+- [x] **Task 1: Cập nhật lưu trữ đăng nhập (Context/Storage)**: Đổi logic lưu từ `isLoggedIn` thành lưu thông tin User Object (bao gồm `role`).
+- [x] **Task 2: Xây dựng màn hình Đăng nhập (Demo Login)**: Sửa giao diện `/login` thành 4 Thẻ đại diện cho 4 Roles (Admin, Doctor, Researcher, Nurse) để click vào là đăng nhập nhanh.
+- [x] **Task 3: Sidebar & Topbar thông minh**: Ẩn/hiện các menu trên Sidebar tùy thuộc vào `role` của người dùng đang đăng nhập. Đổi tên/Avatar ở Topbar cho khớp.
+- [x] **Task 4: Bảo vệ đường dẫn (Route Protection)**: Ngăn chặn người dùng truy cập vào các trang không thuộc thẩm quyền của mình.

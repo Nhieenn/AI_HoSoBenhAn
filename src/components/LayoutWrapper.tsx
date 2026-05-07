@@ -11,12 +11,28 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [isAuth, setIsAuth] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
     const loggedIn = localStorage.getItem('isLoggedIn');
-    if (loggedIn === 'true') {
+    const userStr = localStorage.getItem('user');
+    
+    if (loggedIn === 'true' && userStr) {
       setIsAuth(true);
+      try {
+        const u = JSON.parse(userStr);
+        const role = u.role || 'DOCTOR';
+        
+        // RBAC Route Protection Logic
+        if (pathname.startsWith('/audit') && role !== 'ADMIN') {
+          router.push('/');
+        } else if ((pathname.startsWith('/queue') || pathname.startsWith('/discharge') || pathname.startsWith('/radiology')) && (role === 'ADMIN' || role === 'RESEARCHER')) {
+          router.push('/');
+        } else if (role === 'NURSE' && (pathname === '/' || pathname.startsWith('/audit') || pathname.startsWith('/radiology'))) {
+          router.push('/queue');
+        }
+      } catch (e) {}
     } else {
       setIsAuth(false);
       if (pathname !== '/login') {
@@ -42,11 +58,18 @@ export default function LayoutWrapper({ children }: { children: React.ReactNode 
 
   return (
     <>
-      <Topbar />
+      <Topbar onMenuClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} />
       <div className="layout">
-        <Sidebar />
+        <Sidebar isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
         {children}
       </div>
+      {/* Backdrop for mobile menu */}
+      {isMobileMenuOpen && (
+        <div 
+          className="mobile-backdrop"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
       <DemoNav />
     </>
   );

@@ -121,7 +121,7 @@ export default function DischargeEditor() {
             <span style={{color:'var(--text-secondary)'}}>{id} · Discharge Summary</span>
           </div>
           <h1 className="page-title" style={{fontSize:'24px', marginTop:4, marginBottom:6}}>Bệnh án xuất viện · <span className="mono">{id}</span></h1>
-          <div className="page-meta" style={{display:'flex', alignItems:'center', gap:8, fontSize:'11px'}}>
+          <div className="page-meta" style={{display:'flex', alignItems:'center', gap:8, fontSize:'11px', flexWrap:'wrap'}}>
             <span style={{background:'#000', color:'#facc15', padding:'2px 6px', borderRadius:2, fontWeight:800, fontSize:'9px'}}>ĐẠI ÚY</span>
             <span style={{color:'var(--text-secondary)', fontWeight:500}}>{patientData.name}</span>
             <span className="dot-sep" style={{width:2, height:2}}></span>
@@ -132,7 +132,7 @@ export default function DischargeEditor() {
             <span style={{color:'var(--text-tertiary)'}}>{patientData.diagnosis}</span>
           </div>
         </div>
-        <div style={{ display: 'flex', gap: '8px', alignItems:'center' }}>
+        <div style={{ display: 'flex', gap: '8px', alignItems:'center', flexWrap:'wrap', marginTop:'12px' }}>
           <button className="btn btn-ghost btn-sm" style={{borderColor:'var(--border)', color:'var(--text-primary)'}} onClick={runAIPipeline} disabled={isGenerating}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{width:14, marginRight:4}}><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
             Sinh lại
@@ -156,8 +156,8 @@ export default function DischargeEditor() {
       </div>
 
       {/* PIPELINE BAR */}
-      <div className="card" style={{padding:'14px 24px', marginBottom:24, borderRadius:10}}>
-        <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', gap:10}}>
+      <div className="card" style={{padding:'14px 24px', marginBottom:24, borderRadius:10, overflowX:'auto'}}>
+        <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', gap:10, minWidth:'700px'}}>
           {[
             {n:'HIS', t:'2s'}, {n:'De-id', t:'1.8s'}, {n:'NER', t:'2.3s'}, 
             {n:'RAG', t:'0.9s'}, {n:'LLM', t:'3.4s'}, {n:'Safety', t:'0.6s'}
@@ -191,7 +191,7 @@ export default function DischargeEditor() {
       <div className="editor">
         {/* LEFT PANEL */}
         {/* LEFT PANEL: PATIENT INFO & NER */}
-        <aside className="panel" style={{width:320}}>
+        <aside className="panel">
           <div className="panel-h" style={{background:'transparent', borderBottom:'none', paddingTop:16}}>
             <div className="lbl" style={{fontSize:'12px', color:'var(--text-tertiary)'}}>THÔNG TIN CA BỆNH</div>
             <button 
@@ -208,7 +208,7 @@ export default function DischargeEditor() {
             <div style={{background:'var(--navy-900)', borderRadius:'12px', padding:'16px', color:'#fff', marginBottom:20, position:'relative', overflow:'hidden'}}>
                <div style={{fontSize:'10px', color:'var(--gold)', fontWeight:700, marginBottom:4}}>{id} · 05-05-2026</div>
                <div style={{fontSize:'20px', fontWeight:700, marginBottom:8}}>{patientData.name}</div>
-               <div style={{fontSize:'11px', color:'var(--navy-200)', display:'flex', gap:8, alignItems:'center'}}>
+               <div style={{fontSize:'11px', color:'var(--navy-200)', display:'flex', gap:8, alignItems:'center', flexWrap:'wrap'}}>
                  <span>{patientData.gender} · {patientData.age}t</span>
                  <span className="dot-sep" style={{background:'var(--navy-400)'}}></span>
                  <span>{patientData.rank}</span>

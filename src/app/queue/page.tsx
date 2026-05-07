@@ -23,7 +23,7 @@ export default function InputQueue() {
           <h1 className="page-title">Hàng đợi xử lý hồ sơ</h1>
           <div style={{fontSize:'12px', color:'var(--text-tertiary)'}}>Dữ liệu được đồng bộ thời gian thực từ hệ thống HIS</div>
         </div>
-        <div style={{display:'flex', gap:8}}>
+        <div style={{display:'flex', gap:8, flexWrap:'wrap', marginTop:'10px'}}>
            <button className="btn btn-ghost btn-sm">Lọc danh sách</button>
            <button className="btn btn-accent btn-sm">Đồng bộ HIS</button>
         </div>
@@ -65,7 +65,7 @@ export default function InputQueue() {
                 </td>
                 <td style={{padding:'16px 20px', textAlign:'right', color:'var(--text-tertiary)'}}>{item.time}</td>
                 <td style={{padding:'16px 20px', textAlign:'center'}}>
-                   <Link href={`/${item.id === 'BN-2410' ? 'radiology' : 'discharge'}/${item.id}`} className="btn btn-xs btn-accent" style={{padding:'4px 12px', borderRadius:4, textDecoration:'none', display:'inline-block'}}>
+                   <Link href={`/${item.dept === 'CĐHA' ? 'radiology' : 'discharge'}/${item.id}`} className="btn btn-xs btn-accent" style={{padding:'4px 12px', borderRadius:4, textDecoration:'none', display:'inline-block'}}>
                      Xử lý
                    </Link>
                 </td>

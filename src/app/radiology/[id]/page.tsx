@@ -51,12 +51,12 @@ export default function RadiologyEditor() {
           <div className="crumb" style={{fontSize:'10px', color:'var(--text-tertiary)'}}>
             <Link href="/" style={{color:'inherit', textDecoration:'none'}}>Workspace</Link>
             <span className="crumb-sep">/</span>
-            <Link href="/queue" style={{color:'inherit', textDecoration:'none'}}>Radiology</Link>
+            <Link href="/queue" style={{color:'inherit', textDecoration:'none'}}>Hàng đợi nhập</Link>
             <span className="crumb-sep">/</span>
             <span style={{color:'var(--text-secondary)'}}>{id} · CT Scan Summary</span>
           </div>
           <h1 className="page-title" style={{fontSize:'24px', marginTop:4, marginBottom:6}}>Báo cáo CĐHA · <span className="mono">{id}</span></h1>
-          <div className="page-meta" style={{display:'flex', alignItems:'center', gap:8, fontSize:'11px'}}>
+          <div className="page-meta" style={{display:'flex', alignItems:'center', gap:8, fontSize:'11px', flexWrap:'wrap'}}>
             <span style={{background:'#000', color:'#facc15', padding:'2px 6px', borderRadius:2, fontWeight:800, fontSize:'9px'}}>{patientData.object}</span>
             <span style={{color:'var(--text-secondary)', fontWeight:500}}>{patientData.name}</span>
             <span className="dot-sep" style={{width:2, height:2}}></span>
@@ -67,7 +67,7 @@ export default function RadiologyEditor() {
             <span style={{color:'var(--text-tertiary)'}}>{patientData.date}</span>
           </div>
         </div>
-        <div style={{ display: 'flex', gap: '8px', alignItems:'center' }}>
+        <div style={{ display: 'flex', gap: '8px', alignItems:'center', flexWrap:'wrap', marginTop:'12px' }}>
           <button className="btn btn-ghost btn-sm" style={{borderColor:'var(--border)'}}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{width:14, marginRight:4}}><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
             Sinh lại
@@ -89,7 +89,7 @@ export default function RadiologyEditor() {
         </div>
       </div>
 
-      <div className="editor" style={{gridTemplateColumns:'320px 1fr 300px'}}>
+      <div className="editor">
         {/* LEFT PANEL: DICOM & AI DETECTION */}
         <aside className="panel">
           <div className="panel-h"><div className="lbl">DICOM VIEWER</div></div>
@@ -139,7 +139,7 @@ export default function RadiologyEditor() {
         {/* CENTER PANEL: STRUCTURED REPORT */}
         <main className="panel">
           <div className="panel-h" style={{padding:0, background:'#fff'}}>
-             <div style={{display:'flex', borderBottom:'1px solid var(--border)', width:'100%'}}>
+             <div style={{display:'flex', borderBottom:'1px solid var(--border)', width:'100%', overflowX:'auto', whiteSpace:'nowrap'}}>
                <div style={{padding:'10px 20px', fontSize:'11px', fontWeight:700, borderBottom:'2px solid var(--star-red)', color:'var(--navy-900)'}}>BÁO CÁO CẤU TRÚC</div>
                <div style={{padding:'10px 20px', fontSize:'11px', fontWeight:500, color:'var(--text-tertiary)'}}>SO SÁNH PHIM CŨ</div>
                <div style={{padding:'10px 20px', fontSize:'11px', fontWeight:500, color:'var(--text-tertiary)'}}>AUDIT</div>

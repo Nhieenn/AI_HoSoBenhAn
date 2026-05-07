@@ -3,6 +3,13 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+const DEMO_ACCOUNTS = [
+  { id: 'doctor', role: 'DOCTOR', name: 'Bác sĩ Điều trị', username: 'bacsihung', password: 'password123', avatar: 'NH', dept: 'Khoa Nội · A1' },
+  { id: 'nurse', role: 'NURSE', name: 'Điều dưỡng/HC', username: 'dieuduong', password: 'password123', avatar: 'HC', dept: 'Khoa Khám bệnh' },
+  { id: 'admin', role: 'ADMIN', name: 'Quản trị (Admin)', username: 'quantri', password: 'password123', avatar: 'QT', dept: 'Phòng CNTT' },
+  { id: 'researcher', role: 'RESEARCHER', name: 'Nhà Nghiên cứu', username: 'nghiencuu', password: 'password123', avatar: 'NC', dept: 'Viện NCKH' }
+];
+
 export default function LoginPage() {
   const router = useRouter();
   const [username, setUsername] = useState('');
@@ -15,29 +22,35 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
 
-    // Artificial account logic
     setTimeout(() => {
-      if (username === 'bacsihung' && password === 'password123') {
+      const account = DEMO_ACCOUNTS.find(a => a.username === username && a.password === password);
+      
+      if (account) {
         localStorage.setItem('isLoggedIn', 'true');
-        // Add artificial user info
         localStorage.setItem('user', JSON.stringify({
-          id: 'NH',
-          name: 'BS. Nguyễn V. Hùng',
-          dept: 'Khoa Nội · A1',
-          role: 'doctor'
+          id: account.avatar,
+          name: account.id === 'doctor' ? 'BS. Nguyễn V. Hùng' : account.name,
+          dept: account.dept,
+          role: account.role
         }));
         router.push('/');
       } else {
         setError('Tên đăng nhập hoặc mật khẩu không chính xác.');
         setLoading(false);
       }
-    }, 600); // Simulate network delay
+    }, 600);
+  };
+
+  const fillDemo = (user: string, pass: string) => {
+    setUsername(user);
+    setPassword(pass);
+    setError('');
   };
 
   return (
     <div className="login-page">
       <div className="login-card">
-        <div className="login-head">
+        <div className="login-head" style={{ paddingBottom: '16px' }}>
           <div className="login-logo">
             <svg viewBox="0 0 24 24" fill="#d4332e" stroke="#d4a857" strokeWidth="0.5" style={{ width: '28px', height: '28px' }}>
               <path d="M12 2 L14.4 8.5 L21.5 8.5 L15.8 13 L18.2 19.5 L12 15.5 L5.8 19.5 L8.2 13 L2.5 8.5 L9.6 8.5 Z"/>
@@ -47,7 +60,43 @@ export default function LoginPage() {
           <div className="login-sub">HỆ THỐNG AI TẠO SINH Y KHOA TIẾNG VIỆT</div>
         </div>
 
-        <div className="login-body">
+        <div className="login-body" style={{ paddingTop: '16px' }}>
+          {/* DEMO ACCOUNTS QUICK SELECTOR */}
+          <div style={{ marginBottom: '24px' }}>
+            <div style={{ fontSize: '10px', color: 'var(--navy-300)', textTransform: 'uppercase', marginBottom: '8px', textAlign: 'center', fontWeight: 600 }}>
+              Đăng nhập nhanh dành cho Demo
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+              {DEMO_ACCOUNTS.map((acc) => (
+                <button 
+                  key={acc.id}
+                  type="button"
+                  onClick={() => fillDemo(acc.username, acc.password)}
+                  style={{
+                    background: username === acc.username ? 'var(--gold)' : 'var(--navy-900)',
+                    border: `1px solid ${username === acc.username ? 'var(--gold)' : 'var(--navy-700)'}`,
+                    borderRadius: 'var(--r-sm)',
+                    padding: '8px',
+                    color: username === acc.username ? 'var(--navy-900)' : '#fff',
+                    fontSize: '11px',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    textAlign: 'left',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                >
+                  <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: 'var(--navy-800)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '9px', border: '1px solid var(--navy-600)' }}>
+                    {acc.avatar}
+                  </div>
+                  {acc.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
           {error && (
             <div className="login-error">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: '16px', height: '16px', flexShrink: 0 }}>
