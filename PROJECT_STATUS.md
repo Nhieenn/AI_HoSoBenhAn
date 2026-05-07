@@ -35,18 +35,26 @@ Hệ thống đã chứng minh được tính khả thi (Proof of Concept) của
 
 Để dự án chuyển từ POC sang Production (Thực tế), chúng ta bắt buộc phải giải quyết 3 bài toán sau:
 
-### 3.1. Nút thắt Phần cứng vs. Yêu cầu Bảo mật (Hardware Bottleneck)
+### 3.1. Quyết định Chiến lược AI: Ưu tiên Hệ chuyên gia (Rule-based / If-Else) trước
 
-- **Vấn đề:** BA yêu cầu 100% On-Premise (Local), tuyệt đối không dùng API ngoài (như OpenAI) để bảo vệ PHI (Dữ liệu y tế cá nhân).
-- **Giải pháp:** Bắt buộc phải triển khai Local LLM (Ollama / vLLM chạy mô hình PhoGPT-7B hoặc Llama-3).
-- **Yêu cầu:** Đề xuất Ban Giám đốc cấp máy chủ nội bộ có Card đồ họa (GPU - Tối thiểu Nvidia RTX 3090/4090 hoặc A100) để đảm bảo tốc độ phản hồi < 2 giây.
+- **Bối cảnh:** Việc triển khai Local LLM (Llama-3 / Qwen) đòi hỏi đầu tư máy chủ GPU đắt đỏ (50-70 triệu VNĐ) và mất nhiều thời gian gán nhãn dữ liệu (Fine-tuning).
+- **Quyết định (Pivoting):** Tạm gác lại việc dùng LLM. Ở giai đoạn hiện tại, chúng ta sẽ tiếp tục tối ưu hóa kiến trúc **Hệ chuyên gia (Expert System)** kết hợp với RAG. Cụ thể: AI sẽ hoạt động dựa trên các bộ Luật (If-Else Rules) được cấu trúc chặt chẽ, kết hợp với mô hình bóc tách thực thể (NER) nhỏ gọn chạy mượt trên CPU.
+- **Ưu điểm:** 
+  - **Chi phí phần cứng = 0 đồng.** Hệ thống hiện tại có thể chạy trơn tru trên bất kỳ máy chủ CPU nội bộ nào của bệnh viện.
+  - **Dễ kiểm soát (100% Explainable):** Bác sĩ hoàn toàn có thể truy vết tại sao AI lại chẩn đoán ra bệnh X (dựa vào rule if-else nào), loại bỏ hoàn toàn rủi ro AI "ảo giác" (hallucination) tự bịa ra thông tin.
+- **Tương lai (Giai đoạn mở rộng):** Chỉ khi số lượng Rules (If-Else) phình to đến mức con người không thể bảo trì nổi (> 500 rules), chúng ta mới trình sếp phương án cấp ngân sách mua GPU để chuyển sang Local LLM.
 
-### 3.2. Nút thắt Thuật toán Tìm kiếm (Lexical vs Semantic)
+### 3.2. Cơ chế Tương tác (Human-in-the-loop UI/UX)
+
+- **Vấn đề:** Nếu triệu chứng đầu vào quá sơ sài, AI (dựa trên If-Else) sẽ bị thiếu dữ kiện (thiếu điều kiện IF) để kích hoạt chẩn đoán.
+- **Giải pháp:** Áp dụng luồng UI cảnh báo (Phương án B). Tờ bệnh án A4 vẫn in ra cấu trúc sạch sẽ, NHƯNG ở Cột bên trái (THÔNG TIN CA BỆNH), hệ thống sẽ bật cảnh báo đỏ (VD: *"Triệu chứng chưa đủ mạnh để kết luận. Gợi ý bác sĩ hỏi thêm bệnh nhân về X, Y, Z..."*). Bác sĩ có thể nhập thêm vào ô "Bổ sung ngữ cảnh" rồi chạy lại AI, hoặc chủ động bấm "Phê duyệt" để bỏ qua cảnh báo nếu thấy kết quả đã đủ tốt.
+
+### 3.3. Nút thắt Thuật toán Tìm kiếm (Lexical vs Semantic)
 
 - **Vấn đề:** Thuật toán Vector hiện tại dễ bị đánh lừa bởi từ vựng trùng lặp. (VD: "Ngón cái và ngón trỏ khép mở" ưu tiên tìm ra bệnh *Viêm khớp ngón tay* thay vì *Parkinson*).
 - **Giải pháp:** Cần Fine-tune lại mô hình Embedding riêng cho Y khoa, đồng thời áp dụng kiến trúc Hybrid Search (Kết hợp Vector Search + Keyword Search truyền thống).
 
-### 3.3. Chất lượng Dữ liệu Đầu vào (Garbage In -> Garbage Out)
+### 3.4. Chất lượng Dữ liệu Đầu vào (Garbage In -> Garbage Out)
 
 - **Vấn đề:** AI không thể chẩn đoán đúng nếu đọc sách sai.
 - **Giải pháp:** Dừng sử dụng dữ liệu web đại chúng. Yêu cầu Bệnh viện cung cấp bộ **Phác đồ Điều trị chuẩn của Bộ Y Tế** để AI học lại. Đồng thời, cần nguồn lực Bác sĩ nội trú hỗ trợ gán nhãn (Labeling) 5,000 bệnh án cũ để tinh chỉnh (Fine-tune) văn phong của AI.

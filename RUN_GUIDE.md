@@ -16,6 +16,8 @@ Thành phần này chứa các mô hình AI (PhoBERT) và Cơ sở dữ liệu V
 - **Lưu ý:** Lần chạy đầu tiên sẽ mất khoảng 1-2 phút để tải mô hình `PhoBERT-base-v2` và nạp dữ liệu từ `vector_db`. Khi màn hình hiện `Application startup complete` là thành công.
 - **Địa chỉ API:** `http://localhost:8000/docs` (Swagger UI để test API trực tiếp).
 
+*(Lưu ý cực kỳ quan trọng nếu clone sang máy mới: Vì file Vector DB rất nặng không đẩy lên Git, bạn cần nạp lại 1000 bệnh vào DB bằng cách mở Terminal thứ 3 và chạy lệnh: `python scratch/ingest_full_kb.py` trước khi test).*
+
 ---
 
 ## 2. Khởi động Frontend (Giao diện người dùng Web)

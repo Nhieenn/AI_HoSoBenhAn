@@ -139,6 +139,13 @@ Mọi nội dung trong output có thể truy nguyên về nguồn tài liệu th
 
 ## BR-05: Tích hợp với hệ thống HIS hiện tại
 
+Hệ thống cung cấp module middleware để nhận dữ liệu HL7/FHIR từ HIS và gửi lại báo cáo có cấu trúc để HIS lưu trữ. AI hoạt động như một "Sidecar", không thay thế hoàn toàn HIS.
+
+## BR-06: Kiến trúc AI Nội bộ (Expert System & Human-in-the-loop)
+
+* **Mô hình triển khai (Giai đoạn 1):** Ưu tiên sử dụng **Hệ chuyên gia (Rule-based / If-Else)** kết hợp với trích xuất thực thể (NER) và tìm kiếm Vector (RAG) chạy hoàn toàn trên CPU máy chủ nội bộ. Giải pháp này giúp tiết kiệm 100% chi phí mua sắm GPU và vẫn đảm bảo tuyệt đối không rò rỉ dữ liệu PHI ra ngoài.
+* **Tích hợp LLM (Giai đoạn mở rộng):** Việc sử dụng Local LLM (Llama-3/Qwen) sẽ được dời sang Giai đoạn 2 khi số lượng quy tắc (rules) y khoa vượt quá khả năng bảo trì thủ công và bệnh viện cấp ngân sách mua sắm GPU.
+* **Cảnh báo thiếu dữ kiện:** Nếu AI (dựa trên If-Else) nhận thấy triệu chứng đầu vào không đủ điều kiện để kích hoạt chẩn đoán, UI phải hiển thị "Thông báo cảnh báo đỏ" yêu cầu bác sĩ nhập thêm triệu chứng. Bác sĩ luôn được trao quyền quyết định điền thêm hoặc bấm "Chấp nhận".
 Hệ thống nhận đầu vào từ HIS và xuất kết quả về HIS/EHR theo chuẩn dữ liệu bệnh viện mà không yêu cầu thay đổi workflow hiện tại của bác sĩ.
 
 # 7. YÊU CẦU CHỨC NĂNG (FUNCTIONAL REQUIREMENTS)
