@@ -90,11 +90,18 @@ class WorkflowEngine:
         Sinh nháp ngầm không hiển thị trong workflow thật để đánh giá chất lượng.
         """
         start_time = time.time()
-        generated_text = generator_func(*args, **kwargs)
+        generated_tuple = generator_func(*args, **kwargs)
+        if isinstance(generated_tuple, tuple) and len(generated_tuple) == 2:
+            generated_text, evidence_map = generated_tuple
+        else:
+            generated_text = generated_tuple
+            evidence_map = None
+            
         execution_time = time.time() - start_time
         
         return {
             "generated_text": generated_text,
+            "evidence_map": evidence_map,
             "is_silent": True,
             "execution_time_seconds": execution_time,
             "status": "SILENT_LOGGED"

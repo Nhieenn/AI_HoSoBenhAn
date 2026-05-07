@@ -73,6 +73,7 @@ class GenerateRadiologyRequest(BaseModel):
 
 class GenerateResponse(BaseModel):
     generated_text: str
+    evidence_map: Optional[Dict[str, list[str]]] = None
 
 class RAGIndexRequest(BaseModel):
     content: str
@@ -180,16 +181,16 @@ async def extract_entities(request: NERRequest):
 @app.post("/generate/discharge", response_model=GenerateResponse)
 async def generate_discharge(request: GenerateDischargeRequest):
     try:
-        text = generator.generate_discharge_summary(request.patient_data, request.entities, request.department)
-        return {"generated_text": text}
+        text, evidence = generator.generate_discharge_summary(request.patient_data, request.entities, request.department)
+        return {"generated_text": text, "evidence_map": evidence}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/generate/radiology", response_model=GenerateResponse)
 async def generate_radiology(request: GenerateRadiologyRequest):
     try:
-        text = generator.generate_radiology_report(request.raw_findings, request.entities, request.department)
-        return {"generated_text": text}
+        text, evidence = generator.generate_radiology_report(request.raw_findings, request.entities, request.department)
+        return {"generated_text": text, "evidence_map": evidence}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

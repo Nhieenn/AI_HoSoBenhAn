@@ -19,6 +19,7 @@ export default function DischargeEditor() {
   const [isEditingHIS, setIsEditingHIS] = useState(true);
   const [step, setStep] = useState(7); // Active step in pipeline
   const [entities, setEntities] = useState<any[]>([]);
+  const [evidenceMap, setEvidenceMap] = useState<Record<string, string[]>>({});
   const [safetyResults, setSafetyResults] = useState<SafetyCheck[]>([]);
   const [patientData, setPatientData] = useState<any>({
     name: "Lê Quang H.",
@@ -40,8 +41,12 @@ export default function DischargeEditor() {
       
       // 2. Tra cứu kiến thức y khoa & Sinh bệnh án (LLM + RAG)
       // Lưu ý: Logic chẩn đoán dựa trên triệu chứng nằm trong generator.py (Backend)
-      const genRes = await api.generateDischarge(patientData, nerRes.entities, "General");
+      const patientDataForAI = { ...patientData, diagnosis: "" };
+      const genRes = await api.generateDischarge(patientDataForAI, nerRes.entities, "General");
       setContent(genRes.generated_text);
+      if (genRes.evidence_map) {
+        setEvidenceMap(genRes.evidence_map);
+      }
 
       // Trích xuất chẩn đoán từ văn bản AI sinh ra
       const text = genRes.generated_text;
@@ -222,6 +227,24 @@ export default function DischargeEditor() {
                </div>
             </div>
 
+            {/* Warning Box */}
+            {patientData.diagnosis?.includes('CẢNH BÁO') && (
+              <div style={{background:'rgba(239, 68, 68, 0.1)', border:'1px solid var(--danger)', borderRadius:8, padding:12, marginBottom:16}}>
+                <div style={{display:'flex', alignItems:'center', gap:6, color:'var(--danger)', fontWeight:700, fontSize:'11px', marginBottom:4}}>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{width:14}}><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                  YÊU CẦU BỔ SUNG THÔNG TIN
+                </div>
+                <div style={{fontSize:'11px', color:'var(--navy-800)', lineHeight:1.4}}>
+                  AI không đủ bằng chứng lâm sàng để kết luận bệnh. Vui lòng nhập thêm triệu chứng vào ô bên dưới, sau đó bấm <strong>Cập nhật AI</strong>.
+                </div>
+                {!isEditingHIS && (
+                  <button className="btn btn-xs" style={{marginTop:8, background:'var(--danger)', color:'#fff', padding:'4px 8px'}} onClick={() => setIsEditingHIS(true)}>
+                    Bổ sung ngay
+                  </button>
+                )}
+              </div>
+            )}
+
             {/* Editing Context Area */}
             {isEditingHIS && (
               <div style={{background:'var(--navy-50)', border:'1px dashed var(--star-red)', borderRadius:8, padding:12, marginBottom:16}}>
@@ -259,31 +282,45 @@ export default function DischargeEditor() {
                 </div>
               </div>
 
-              <div className="fact" style={{borderLeftColor:'var(--danger)'}}>
-                <div className="fact-k">Dị ứng (HIS)</div>
-                <div className="fact-v" style={{fontSize:'12px', color:'var(--star-red)'}}>Penicillin</div>
-              </div>
-
-              <div className="fact" style={{borderLeftColor:'var(--warning)'}}>
-                <div className="fact-k">Cần xác nhận</div>
-                <div className="fact-v" style={{fontSize:'11px', color:'var(--text-secondary)'}}>Liều Aspirin xuất viện</div>
-              </div>
-
+              {/* Evidence Mapping (Grouped) */}
               <div style={{marginTop:10}}>
-                <div className="fact-k" style={{textAlign:'center'}}>Thực thể trích xuất</div>
-                <div style={{display:'flex', flexWrap:'wrap', gap:4, marginTop:6, justifyContent:'center'}}>
-                  {entities.map((e, i) => (
-                    <span key={i} className="badge-xs" style={{
-                      background: e.type === 'SYMPTOM' ? 'rgba(212,51,46,0.1)' : 'var(--navy-100)',
-                      color: e.type === 'SYMPTOM' ? 'var(--star-red)' : 'var(--navy-700)',
-                      border: '1px solid rgba(0,0,0,0.05)',
-                      padding: '2px 6px',
-                      borderRadius: '4px'
-                    }}>
-                      {e.text}
-                    </span>
-                  ))}
-                  {entities.length === 0 && <span style={{fontSize:'10px', color:'var(--text-tertiary)'}}>Đang xử lý...</span>}
+                <div className="fact-k" style={{textAlign:'center'}}>Phân tích Bằng chứng (AI)</div>
+                <div style={{display:'flex', flexDirection:'column', gap:8, marginTop:8}}>
+                  {Object.keys(evidenceMap).length > 0 ? (
+                    Object.entries(evidenceMap).map(([diagnosis, symptoms], idx) => (
+                      <div key={idx} style={{background: 'var(--navy-50)', padding:8, borderRadius:6, borderLeft: '3px solid ' + (diagnosis.includes('CHƯA RÕ') ? 'var(--danger)' : 'var(--success)')}}>
+                        <div style={{fontSize:'11px', fontWeight:700, color:'var(--navy-800)', marginBottom:4}}>{diagnosis}</div>
+                        <div style={{display:'flex', flexWrap:'wrap', gap:4}}>
+                          {symptoms.map((s, i) => (
+                            <span key={i} className="badge-xs" style={{
+                              background: 'rgba(212,51,46,0.1)',
+                              color: 'var(--star-red)',
+                              border: '1px solid rgba(0,0,0,0.05)',
+                              padding: '2px 6px',
+                              borderRadius: '4px'
+                            }}>
+                              {s}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div style={{display:'flex', flexWrap:'wrap', gap:4, justifyContent:'center'}}>
+                      {entities.map((e, i) => (
+                        <span key={i} className="badge-xs" style={{
+                          background: e.type === 'SYMPTOM' ? 'rgba(212,51,46,0.1)' : 'var(--navy-100)',
+                          color: e.type === 'SYMPTOM' ? 'var(--star-red)' : 'var(--navy-700)',
+                          border: '1px solid rgba(0,0,0,0.05)',
+                          padding: '2px 6px',
+                          borderRadius: '4px'
+                        }}>
+                          {e.text}
+                        </span>
+                      ))}
+                      {entities.length === 0 && <span style={{fontSize:'10px', color:'var(--text-tertiary)'}}>Đang xử lý...</span>}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

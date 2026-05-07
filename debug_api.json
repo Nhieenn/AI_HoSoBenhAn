@@ -1,0 +1,14 @@
+{
+  "generated_text": "BỆNH VIỆN ĐA KHOA\nTÓM TẮT HỒ SƠ BỆNH ÁN\n\n1. HÀNH CHÍNH\nHọ và tên: Lê Quang H.\nTuổi: [CHƯA CÓ THÔNG TIN]\nGiới tính: [CHƯA CÓ THÔNG TIN]\n\n2. TÓM TẮT BỆNH ÁN\nBệnh nhân vào viện với lý do: Đau ngực dữ dội vùng sau xương ức khi vận động gắng sức, vã mồ hôi, cảm giác bóp nghẹt.\n- Triệu chứng: Đau ngực, sau xương ức, vận động gắng sức, vã mồ hôi, bóp nghẹt\n- Bệnh lý đã ghi nhận: Không ghi nhận\n- Thuốc đã dùng: Không ghi nhận\n\n3. CHẨN ĐOÁN XUẤT VIỆN\nTheo dõi Nhồi máu cơ tim cấp / Cơn đau thắt ngực [Đa bệnh lý - Gợi ý AI]\n\n4. PHƯƠNG PHÁP ĐIỀU TRỊ\nĐiều trị nội khoa\n\n5. LỜI KHUYÊN\nTái khám sau 1 tuần hoặc khi có dấu hiệu bất thường.",
+  "evidence_map": {
+    "Theo dõi Nhồi máu cơ tim cấp / Cơn đau thắt ngực": [
+      "Đau ngực",
+      "sau xương ức",
+      "vã mồ hôi",
+      "bóp nghẹt"
+    ],
+    "Các triệu chứng khác (Chưa rõ bệnh)": [
+      "vận động gắng sức"
+    ]
+  }
+}

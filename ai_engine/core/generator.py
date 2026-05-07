@@ -122,37 +122,60 @@ KẾT QUẢ CHẨN ĐOÁN HÌNH ẢNH
                 rag_context = results["combined_context"] if results["citations"] else ""
                 
                 diagnoses_list = []
+                evidence_map = {}
+                unused_symptoms = list(extracted_symptoms)
+                
+                def add_evidence(diag: str, keywords: List[str]):
+                    matched = [s for s in unused_symptoms if any(k in s.lower() for k in keywords)]
+                    if matched:
+                        evidence_map[diag] = matched
+                        for m in matched:
+                            unused_symptoms.remove(m)
+
                 # Đánh giá độc lập từng hệ cơ quan (Multi-morbidity)
                 if "Sốt xuất huyết" in rag_context and ("xuất huyết" in low_symptoms or "phát ban" in low_symptoms or "hốc mắt" in low_symptoms):
                     diagnoses_list.append("Sốt xuất huyết Dengue")
+                    add_evidence("Sốt xuất huyết Dengue", ["xuất huyết", "phát ban", "hốc mắt", "sốt"])
+                    
                 elif "sốt rét" in rag_context.lower() and ("rét" in low_symptoms or "vã mồ hôi" in low_symptoms):
                     diagnoses_list.append("Sốt rét")
+                    add_evidence("Sốt rét", ["rét", "mồ hôi", "sốt"])
+                    
                 elif "sốt" in low_symptoms or "đau đầu" in low_symptoms:
                     diagnoses_list.append("Hội chứng nhiễm siêu vi")
+                    add_evidence("Hội chứng nhiễm siêu vi", ["sốt", "đau đầu", "mệt"])
                     
                 if "Suy tim" in rag_context and "phù" in low_symptoms and ("khó thở" in low_symptoms or "tĩnh mạch" in low_symptoms):
                     diagnoses_list.append("Theo dõi Suy tim")
+                    add_evidence("Theo dõi Suy tim", ["phù", "khó thở", "tĩnh mạch", "mệt"])
                     
                 if "đau ngực" in low_symptoms or "bóp nghẹt" in low_symptoms or "quặn thắt" in low_symptoms or "đau thắt ngực" in low_symptoms:
                     diagnoses_list.append("Theo dõi Nhồi máu cơ tim cấp / Cơn đau thắt ngực")
+                    add_evidence("Theo dõi Nhồi máu cơ tim cấp / Cơn đau thắt ngực", ["đau ngực", "bóp nghẹt", "quặn thắt", "vã mồ hôi", "xương ức"])
                     
                 if "thủy tinh thể" in rag_context and "mờ" in low_symptoms:
                     diagnoses_list.append("Đục thủy tinh thể")
+                    add_evidence("Đục thủy tinh thể", ["mờ", "mắt"])
                     
                 if "Viêm tụy" in rag_context and "đau bụng" in low_symptoms:
                     diagnoses_list.append("Theo dõi Viêm tụy cấp")
+                    add_evidence("Theo dõi Viêm tụy cấp", ["đau bụng", "nôn", "sốt"])
                     
                 if "thượng vị" in low_symptoms or "ợ chua" in low_symptoms or "chướng bụng" in low_symptoms or "dạ dày" in low_symptoms:
                     diagnoses_list.append("Trào ngược / Viêm loét dạ dày tá tràng")
+                    add_evidence("Trào ngược / Viêm loét dạ dày tá tràng", ["thượng vị", "ợ", "chướng", "dạ dày"])
                     
                 if "lạo xạo" in low_symptoms or "cứng khớp" in low_symptoms or "đau lan" in low_symptoms or "thoái hóa" in low_symptoms:
                     diagnoses_list.append("Thoái hóa khớp")
+                    add_evidence("Thoái hóa khớp", ["lạo xạo", "cứng", "lan", "đau", "thoái hóa"])
                     
                 if "Thoát vị đĩa đệm" in rag_context and "tê bì" in low_symptoms:
                     diagnoses_list.append("Theo dõi Thoát vị đĩa đệm cột sống")
+                    add_evidence("Theo dõi Thoát vị đĩa đệm cột sống", ["tê bì", "đau lưng", "lan"])
                     
                 if "run" in low_symptoms and ("chậm chạp" in low_symptoms or "nghỉ ngơi" in low_symptoms):
                     diagnoses_list.append("Bệnh Parkinson")
+                    add_evidence("Bệnh Parkinson", ["run", "chậm chạp", "nghỉ ngơi", "cứng"])
                     
                 # Lấy thêm bệnh từ Top 1 RAG nếu chưa có trong danh sách
                 if results["citations"] and results["citations"][0]["score"] > 0.6:
@@ -161,14 +184,16 @@ KẾT QUẢ CHẨN ĐOÁN HÌNH ẢNH
                     
                     if not suggested_name:
                         suggested_name = results["citations"][0]["text_snippet"].split(":")[0].strip()
-                        # Nếu tên bệnh quá dài (do cắt từ PDF không có dấu hai chấm), ta hiển thị tên mặc định
                         if len(suggested_name) > 40:
                             suggested_name = "Bệnh lý theo RAG gợi ý"
                         
-                    # Chỉ thêm nếu tên bệnh chưa nằm trong các rule trên
                     is_duplicate = any(word.lower() in suggested_name.lower() for word in ["sốt xuất huyết", "sốt rét", "siêu vi", "suy tim", "nhồi máu", "đau thắt", "thủy tinh thể", "viêm tụy", "dạ dày", "thoái hóa khớp", "thoát vị", "mồ hôi"])
                     if not is_duplicate:
                         diagnoses_list.append(suggested_name)
+                        # Add remaining symptoms to this RAG diagnosis
+                        if unused_symptoms:
+                            evidence_map[suggested_name] = list(unused_symptoms)
+                            unused_symptoms.clear()
 
                 # Tổng hợp kết quả đa bệnh lý
                 if diagnoses_list:
@@ -178,6 +203,13 @@ KẾT QUẢ CHẨN ĐOÁN HÌNH ẢNH
                         diagnosis = f"{diseases} [UNCERTAIN: Cần bác sĩ xác nhận lại]"
                     else:
                         diagnosis = "[CẢNH BÁO: CHƯA RÕ CHẨN ĐOÁN - YÊU CẦU BỔ SUNG]"
+
+                if unused_symptoms:
+                    evidence_map["Các triệu chứng khác (Chưa rõ bệnh)"] = unused_symptoms
+
+        else:
+            # Fallback if diagnosis was already provided
+            evidence_map = {"Các triệu chứng khác (Chưa rõ bệnh)": extracted_symptoms}
 
         # Điền dữ liệu vào template
         filled = template.format(
@@ -193,7 +225,7 @@ KẾT QUẢ CHẨN ĐOÁN HÌNH ẢNH
             treatments=treatments,
             advices=patient_data.get("advices", "Tái khám sau 1 tuần hoặc khi có dấu hiệu bất thường.")
         )
-        return filled.strip()
+        return filled.strip(), evidence_map
 
     def generate_radiology_report(self, raw_findings: str, entities: List[Dict], department: str = "XRay") -> str:
         """Sinh nháp Báo cáo Chẩn đoán hình ảnh."""
@@ -217,4 +249,4 @@ KẾT QUẢ CHẨN ĐOÁN HÌNH ẢNH
             findings=raw_findings.replace("Kết luận:", "").strip(),
             conclusion=conclusion
         )
-        return filled.strip()
+        return filled.strip(), {"Bằng chứng CĐHA": self._extract_entities_by_type(entities, "SYMPTOM")}
